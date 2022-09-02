@@ -20,4 +20,4 @@ The repo has two main folders: api (backend code) and client (frontend code). Fo
 ![image](https://user-images.githubusercontent.com/6148965/188202725-695de16b-f18b-4756-b34f-707ddb410e7d.png)
 
 
-5. And that's it for now! Much more to do. If you have any issues, please make sure you're running the latest version of Chrome (I'm using manifest v3 on Chrome which is new-ish). Or else, feel free to contact me (email: rmathur101@gmail.com)!
+5. And that's it for now! Much more to do. If you have any issues, please make sure you're running the latest version of Chrome (I'm using manifest v3 on Chrome which is new-ish). Or else, feel free to contact me!
