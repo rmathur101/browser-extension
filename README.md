@@ -18,7 +18,7 @@ The repo has two main folders: api (backend code) and client (frontend code). Fo
 
 **4. Clicking the extension should give you something that looks like this:** 
 
-![image](https://user-images.githubusercontent.com/6148965/188199577-3e4188c1-a7b8-42fb-b17d-44b78e2bd350.png)
+![image](https://user-images.githubusercontent.com/6148965/188202725-695de16b-f18b-4756-b34f-707ddb410e7d.png)
 
 
 **5. And that's it for now! Much more to do. If you have any issues, please make sure you're running the latest version of chrome (I'm using manifest v3 on chrome which is new-ish). Or else, feel free to contact me (email: rmathur101@gmail.com)!** 
