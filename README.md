@@ -1,8 +1,7 @@
-# Quickstart
-## Repo Overview
+# Repo Overview
 The repo has two main folders: api (backend code) and client (frontend code). For the backend, we plan to use python. For the frontend, undecided if any frameworks will be used - still understanding the browser extensions ecosystem. Browsers have different standards, and different degrees to which they implement the w3c browser extensions standard (annoying!), so still exploring this.
 
-## Running the Extension 
+# Running the Extension 
 1. In the meantime, if you want to test out the (very basic) functionality on Chrome, do the following:
 
 ![image](https://user-images.githubusercontent.com/6148965/188198446-bb8dec7c-73f5-4b8e-b37c-ff9ef301fa4d.png)
