@@ -1,14 +1,20 @@
 {
-  "manifest_version": 3,
   "name": "Example",
-  "version": "2.0",
-
-  "description": "Messing around with browser extension APIs",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Thinker Browser Extension",
 
   "permissions": [
+    "storage",
     "activeTab",
-    "storage"
+    "scripting"
   ],
+
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+
+  "options_page": "views/options.html",
 
   "action": {
     "default_popup": "views/popup.html",
@@ -18,5 +24,12 @@
       "48": "icons/get_started48.png",
       "128": "icons/get_started128.png"
     }
+  },
+
+  "icons": {
+    "16": "icons/get_started16.png",
+    "32": "icons/get_started32.png",
+    "48": "icons/get_started48.png",
+    "128": "icons/get_started128.png"
   }
 }
