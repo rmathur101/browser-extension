@@ -1,10 +1,11 @@
 #popup-container {
-	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	/* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
+	/* background: linear-gradient(-45deg, white, blue, purple, silver); */
 	background-size: 400% 400%;
 	animation: gradient 15s ease infinite;
 
   width: 500px;
-  height: 500px;
+  height: 150px;
 }
 
 @keyframes gradient {
@@ -17,4 +18,44 @@
 	100% {
 		background-position: 0% 50%;
 	}
+}
+
+body {
+	font-family: "Montserrat", sans-serif;
+}
+
+#bookmark-checkbox-input, 
+#bookmark-checkbox-label, 
+#bookmark-checkbox-info-icon-cont,
+#bookmark-checkbox-info-icon, 
+#share-checkbox-input, 
+#share-checkbox-label, 
+#share-checkbox-info-icon, 
+#add-tag-btn, 
+#add-tag-checkbox-info-icon {
+	vertical-align: middle;
+}
+
+#bookmark-checkbox-info-icon, #share-checkbox-info-icon, #add-tag-checkbox-info-icon {
+	width: 15px;
+}
+
+/* #bookmark-checkbox-input, #share-checkbox-input {
+	font-size: 20px
+} */
+
+.bookmark-submit-label {
+	font-size: 15px;
+	/* color: white; */
+	/* font-weight: bold; */
+}
+
+#bookmark-checkbox-input, 
+#bookmark-checkbox-info-icon,
+#share-checkbox-input,
+#share-checkbox-info-icon,
+#add-tag-btn,
+#add-tag-checkbox-info-icon,
+#submit-btn {
+	cursor: pointer;
 }
