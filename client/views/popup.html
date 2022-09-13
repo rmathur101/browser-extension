@@ -2,13 +2,31 @@
 <html>
   <head>
     <link rel="stylesheet" href="../styles/popup.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
   </head>
   <body id="popup-container">
-    <h1>Browser extension is working...</h1>
-    <!-- <h1>URL to bookmark:</h1> -->
-    <!-- <br/> -->
-    <!-- <a id="bookmark-url"></a> -->
-    <button id="changeColor">Change Color Button</button>
+    <span class="bookmark-input-cont">
+      <input id="bookmark-checkbox-input" type="checkbox" name="bookmark-checkbox" checked>
+      <label class="bookmark-submit-label" id="bookmark-checkbox-label" for="bookmark-checkbox">BOOKMARK</label>
+      <img id="bookmark-checkbox-info-icon" src="../icons/info.png" alt="INFO">
+    </span>
+    <br>
+    <span class="share-input-cont">
+      <input id="share-checkbox-input" type="checkbox" name="share-checkbox">
+      <label class="bookmark-submit-label" id="share-checkbox-label" for="share-checkbox">SHARE</label>
+      <img id="share-checkbox-info-icon" src="../icons/info.png" alt="INFO"></span>
+    </span>
+    <br>
+    <span class="add-tag-input-cont">
+      <button id="add-tag-btn">Add Tag</button>
+      <img id="add-tag-checkbox-info-icon" src="../icons/info.png" alt="INFO">
+    </span>
+    <br>
+    <span>
+      <button id="submit-btn">Done</button>
+    </span>
+    <script src="../config/config.js"></script>
+    <script src="../scripts/axios.min.js"></script>
     <script src="../scripts/popup.js"></script>
   </body>
 </html>
