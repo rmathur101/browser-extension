@@ -10,6 +10,8 @@
     "scripting"
   ],
 
+  "host_permissions": ["http://188.166.125.32:8000/*"],
+
   "background": {
     "service_worker": "scripts/background.js"
   },
