@@ -1,3 +1,12 @@
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+
+
 #popup-container {
 	/* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
 	/* background: linear-gradient(-45deg, white, blue, purple, silver); */
@@ -38,6 +47,7 @@ body {
 
 #bookmark-checkbox-info-icon, #share-checkbox-info-icon, #add-tag-checkbox-info-icon {
 	width: 15px;
+	font-size: 15px;
 }
 
 /* #bookmark-checkbox-input, #share-checkbox-input {
