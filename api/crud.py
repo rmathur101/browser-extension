@@ -1,7 +1,7 @@
 from typing import Generic, Type, TypeVar, List
 from sqlmodel import SQLModel, Session, select, delete, update
 from sqlalchemy.future import Engine
-from models import User, Bookmark, Tag
+from models import User, Url, Tag
 from db import engine
 
 
@@ -54,14 +54,14 @@ class CRUDUser(CRUDBase[User, Engine]):
     ...
 
 
-class CRUDBookmark(CRUDBase[Bookmark, Engine]):
+class CRUDUrl(CRUDBase[Url, Engine]):
     ...
 
 
-class CRUDBookmark(CRUDBase[Bookmark, Engine]):
+class CRUDTag(CRUDBase[Tag, Engine]):
     ...
 
 
-bookmark = CRUDBookmark(Bookmark, engine)
+url = CRUDUrl(Url, engine)
 user = CRUDUser(User, engine)
-tag = CRUDUser(Tag, engine)
+tag = CRUDTag(Tag, engine)
