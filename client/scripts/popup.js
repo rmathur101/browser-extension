@@ -41,14 +41,12 @@ submitBtn.addEventListener("click", async () => {
   console.log("shouldShare")
   console.log(isShareChecked)
   try {
-    const response = await axios.post(CONFIG.API_ENDPOINT + "bookmarks", {
-      // userIdCode: "ABCDEF",
-      // bookmarkURL: tabURL,
-      // shouldBookmark: isBookmarkChecked,
-      // shouldShare: isShareChecked,
-      // tags: [],
-      user_id: 4,
-      url: tabURL
+    const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
+      url: tabURL,
+      bookmark: isBookmarkChecked,
+      share: isShareChecked,
+      user_id: "425839636787495169", // this should be test user, firecat@email.com
+      tags: ["test100", "test200"],
     })
     console.log(response)
   } catch (error) {
