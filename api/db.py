@@ -1,4 +1,4 @@
-import models
+from api import models
 from sqlmodel import Session, SQLModel, create_engine
 from dotenv import dotenv_values
 
