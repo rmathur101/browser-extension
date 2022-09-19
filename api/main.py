@@ -40,7 +40,7 @@ def read_user(*, session: Session = Depends(get_session), user_id: int):
     return user
 
 
-@app.post("/url/")
+@app.post("/url/", response_model=models.UrlUserRead)
 def create_url(
     *, session: Session = Depends(get_session), url_user: models.UrlUserCreateApi
 ):
