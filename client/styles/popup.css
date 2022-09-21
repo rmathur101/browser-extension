@@ -6,7 +6,6 @@
   'opsz' 48
 }
 
-
 #popup-container {
 	/* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
 	/* background: linear-gradient(-45deg, white, blue, purple, silver); */
@@ -41,13 +40,20 @@ body {
 #share-checkbox-label, 
 #share-checkbox-info-icon, 
 #add-tag-btn, 
-#add-tag-checkbox-info-icon {
+#add-tag-checkbox-info-icon,
+#add-tag-input-label,
+#add-tag-btn {
 	vertical-align: middle;
 }
 
 #bookmark-checkbox-info-icon, #share-checkbox-info-icon, #add-tag-checkbox-info-icon {
 	width: 15px;
 	font-size: 15px;
+}
+
+#add-tag-btn {
+	font-size: 20px;
+	color: green;
 }
 
 /* #bookmark-checkbox-input, #share-checkbox-input {
@@ -69,3 +75,16 @@ body {
 #submit-btn {
 	cursor: pointer;
 }
+
+#new-tag-cont {
+	display: none
+}
+
+#new-tags-display-cont > span {
+	border: 1px solid black;
+	padding: 1px 1px 1px 1px;
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+
