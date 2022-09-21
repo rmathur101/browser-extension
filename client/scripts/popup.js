@@ -45,14 +45,77 @@ submitBtn.addEventListener("click", async () => {
       url: tabURL,
       bookmark: isBookmarkChecked,
       share: isShareChecked,
-      user_id: "425839636787495169", // this should be test user, firecat@email.com
-      tags: ["test100", "test200"],
+      user_id: 2, // this should be test user, firecat@email.com
+      tags: newTags,
     })
     console.log(response)
   } catch (error) {
     console.log(error)
   }
 })
+
+let newTags = []
+
+let newTagCancelBtn = document.getElementById("new-tag-cancel-btn")
+newTagCancelBtn.addEventListener("click", async() => {
+  let newTagInput = document.getElementById("new-tag-input")
+  newTagInput.value = ""
+  hideNewTagCont()
+})
+
+let showNewTagContainer = () => {
+  document.getElementById("new-tag-cont").style.display = "inline"
+}
+
+let hideNewTagCont = () => {
+  document.getElementById("new-tag-cont").style.display = "none"
+}
+
+let addTagBtn = document.getElementById("add-tag-btn");
+addTagBtn.addEventListener("click", async () => {
+  showNewTagContainer()
+  document.getElementById("new-tag-input").focus()
+})
+
+let newTagDoneBtn = document.getElementById("new-tag-done-btn")
+newTagDoneBtn.addEventListener("click", async () => {
+  let elem = document.getElementById("new-tag-input")
+  let newTagText = elem.value
+  if (newTagText.length > 0) {
+    newTags.push(newTagText.toUpperCase())
+    elem.value = ""
+    hideNewTagCont()
+    renderDisplayNewTags()
+  }
+})
+
+let removeTagBtnClick = async(e) => {
+  let removeTagBtnElem = e.target
+  let tagElem = removeTagBtnElem.previousElementSibling
+  let tagName = tagElem.innerHTML
+  let tagIndex = newTags.indexOf(tagName)
+  if (tagIndex > -1) {
+    newTags.splice(tagIndex, 1)
+    renderDisplayNewTags()
+  }
+}
+
+function renderDisplayNewTags() {
+  let elem = document.getElementById("new-tags-display-cont")
+  elem.innerHTML = ""
+  for (const tag of newTags) {
+    let span = `<span><span class="tag-name" style="vertical-align: middle;">${tag}</span><span class="material-symbols-outlined remove-tag-btn" style="font-size: 11px; vertical-align: middle; color: red;">close</span></span>`
+    elem.insertAdjacentHTML('beforeend', span) 
+  }
+
+  let removeTagBtns = document.querySelectorAll('.remove-tag-btn')
+  for (const elem of removeTagBtns) {
+    elem.removeEventListener("click", removeTagBtnClick)
+    elem.addEventListener("click", removeTagBtnClick)
+  }
+}
+
+
 
 
 // BELOW CODE IS CHROME EXTENSION TUTORIAL -------------------------------------------------------------------------
