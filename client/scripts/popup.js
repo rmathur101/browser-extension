@@ -28,6 +28,10 @@ function getIsShareCheckedBool() {
  }
 }
 
+function getDescription() {
+  return document.getElementById("bookmark-description-value").value
+}
+
 function getShareInfo() {}
 
 function getTagInfo() {}
@@ -37,12 +41,7 @@ submitBtn.addEventListener("click", async () => {
   let tabURL = await getActiveTabURL()
   let isBookmarkChecked = getIsBookmarkCheckedBool() 
   let isShareChecked = getIsShareCheckedBool()
-  console.log("bookmarkURL")
-  console.log(tabURL)
-  console.log("shouldBookmark")
-  console.log(isBookmarkChecked)
-  console.log("shouldShare")
-  console.log(isShareChecked)
+  let description = getDescription() 
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
       url: tabURL,
@@ -50,6 +49,8 @@ submitBtn.addEventListener("click", async () => {
       share: isShareChecked,
       user_id: 2, // this should be test user, firecat@email.com
       tags: newTags,
+      user_descr: description,
+      rating: rating
     })
     console.log(response)
   } catch (error) {
