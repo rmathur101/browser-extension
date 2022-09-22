@@ -1,6 +1,9 @@
 // TODO: need to look at firefox implementation / web standard to see if I can generalize
 // TODO: and / or need to see if I can avoid callbacks (in favor of promises)
 
+let newTags = []
+let rating = null
+
 async function getActiveTabURL() {
   let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true});
   // TODO: need to handle the case where we are not able to find the tab (active: true, etc.)
@@ -53,8 +56,6 @@ submitBtn.addEventListener("click", async () => {
     console.log(error)
   }
 })
-
-let newTags = []
 
 let newTagCancelBtn = document.getElementById("new-tag-cancel-btn")
 newTagCancelBtn.addEventListener("click", async() => {
@@ -116,6 +117,58 @@ function renderDisplayNewTags() {
 }
 
 
+function clearSubmitBookmarkRatingStars() {
+    let starNumber = 5 // TODO: need to get this dynamically based on the greatest one probs
+    while (starNumber > 0) {
+      let elem = document.querySelector(`[data-submit-rating-star="${starNumber}"]`)
+      elem.classList.remove("rating-star-filled")
+      starNumber = starNumber - 1
+    }
+}
+
+function fillSubmitBookmarkRatingStarsBasedOnRating() {
+  let starNumber = rating
+  while (starNumber != null && starNumber > 0) {
+    let elem = document.querySelector(`[data-submit-rating-star="${starNumber}"]`)
+    elem.classList.add("rating-star-filled")
+    starNumber = starNumber - 1
+  }
+}
+
+let bookmarkSubmitRatingStars = document.getElementsByClassName("bookmark-submit-rating-star")
+for (const star of bookmarkSubmitRatingStars) {
+
+  star.addEventListener("mouseover", async (e) => {
+    clearSubmitBookmarkRatingStars()
+    let starNumber = e.target.dataset.submitRatingStar
+    while (starNumber > 0) {
+      let elem = document.querySelector(`[data-submit-rating-star="${starNumber}"]`)
+      elem.classList.add("rating-star-filled")
+      starNumber = starNumber - 1
+    }
+  })
+
+
+  star.addEventListener("click", async(e) => {
+    let starNumber = e.target.dataset.submitRatingStar
+    let elem = document.getElementById("bookmark-submit-rating")
+    // if the choose the same rating as they already have, clear all ratings
+    if (starNumber == rating) {
+      rating = null
+      elem.innerHTML = ''
+    } else {
+      rating = parseInt(starNumber)
+      elem.innerHTML = `(${rating}/5)`
+    }
+
+  })
+} 
+
+let bookmarkSubmitRatingStarsCont = document.getElementById("bookmark-submit-rating-stars-cont")
+bookmarkSubmitRatingStarsCont.addEventListener("mouseout", async(e) => {
+  clearSubmitBookmarkRatingStars()
+  fillSubmitBookmarkRatingStarsBasedOnRating()
+})
 
 
 // BELOW CODE IS CHROME EXTENSION TUTORIAL -------------------------------------------------------------------------
