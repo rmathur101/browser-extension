@@ -82,9 +82,32 @@ body {
 
 #new-tags-display-cont > span {
 	border: 1px solid black;
-	padding: 1px 1px 1px 1px;
 	margin-right: 5px;
 	cursor: pointer;
 }
+
+#bookmark-submit-rating-stars-cont {
+	display: inline-block;
+	height: 20px;
+}
+
+#bookmark-submit-rating {
+	vertical-align: middle;
+}
+
+.bookmark-submit-rating-star {
+	font-size: 20px !important;
+	height: 20px;
+	width: 20px;
+	vertical-align: middle;
+}
+
+.rating-star-filled {
+	cursor: pointer; 
+	color: gold; 
+	font-variation-settings: 'FILL' 1;
+}
+
+
 
 

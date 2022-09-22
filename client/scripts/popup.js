@@ -155,7 +155,7 @@ for (const star of bookmarkSubmitRatingStars) {
     // if the choose the same rating as they already have, clear all ratings
     if (starNumber == rating) {
       rating = null
-      elem.innerHTML = ''
+      elem.innerHTML = '(None)'
     } else {
       rating = parseInt(starNumber)
       elem.innerHTML = `(${rating}/5)`
