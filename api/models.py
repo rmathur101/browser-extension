@@ -64,11 +64,13 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
-
     created_at: datetime = Field(default=datetime.utcnow(), nullable=False)
-    urls: Optional[List[UrlUser]] = Relationship(back_populates="user")
 
-    # Code for the SonyFlake ID generator
+    discord_id: Optional[int] = None
+    discord_username: Optional[str] = None
+    discord_avatar: Optional[str] = None
+
+    urls: Optional[List[UrlUser]] = Relationship(back_populates="user")
 
 
 class UserCreate(UserBase):

@@ -1,12 +1,21 @@
 from typing import List
 from api import models, crud, utils
 from db import create_db_and_tables, get_session
-from sonyflake import SonyFlake
 from sqlalchemy.exc import IntegrityError
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlalchemy.orm import Session
+import dotenv
+from discord import Oauth, send_message
 
-id_generator = SonyFlake()
+
+config = dotenv.dotenv_values()
+GUILD_ID_1729 = config["GUILD_ID_1729"]
+discord_oauth = Oauth(
+    config["CLIENT_ID"],
+    config["CLIENT_SECRET"],
+    config["REDIRECT_URL"],
+    scope="identify email guilds",
+)
 
 app = FastAPI()
 
@@ -82,10 +91,77 @@ def create_url(
     url_user_created = models.UrlUserRead(
         url=models.UrlRead(url=url_str), tags=tags_created, **url_user_created.dict()
     )
+
+    # Check if url should be shared. And if so share to discord.
+    if url_user.share:
+        user = crud.user.get(url_user.user_id)
+        if user.discord_id is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"The user {url_user.user_id} has not linked their discord account",
+            )
+        else:
+            send_message(
+                message=url_user.user_descr,
+                url=url_str,
+                username=user.discord_username,
+                avatar_url=user.discord_avatar,
+            )
+
     return url_user_created
 
 
-# @app.post("/tags/", response_model=models.TagRead)
-# def create_tags(tag: models.TagCreate):
-#     tag_created = crud.tag.create(tag)
-#     return tag_created
+@app.get("/discord")
+async def login():
+    url = discord_oauth.get_authorization_url()
+    return {"url": url}
+
+
+@app.post("/discord")
+async def add_discord_data_to_db(user_id: int, code: str):
+    tokens = discord_oauth.get_access_token(code=code)
+    discord_user = discord_oauth.get_user(access_token=tokens["access_token"])
+    guilds = discord_oauth.get_guilds(access_token=tokens["access_token"])
+
+    # Check if user is in 1729 guild
+    if not any([guild["id"] == GUILD_ID_1729 for guild in guilds]):
+        raise HTTPException(status_code=404, detail="User not in 1729")
+
+    user = models.User(
+        id=user_id,
+        discord_id=discord_user["id"],
+        discord_username=discord_user["username"],
+        discord_avatar=discord_user["avatar"],
+    )
+    crud.user.update(user)
+
+    return {"success": True}
+
+
+@app.post("/share")
+async def share(user_id, url_id, descr):
+    user = crud.user.get(user_id)
+    url = crud.url.get(url_id)
+    url_user = crud.url_user.get(user_id, url_id)
+
+    if url_user.share:
+        raise HTTPException(
+            status_code=404, detail=f"The url {url.url} is already shared"
+        )
+
+    if user.discord_id is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"The user {user_id} has not linked their discord account",
+        )
+    else:
+        send_message(
+            message=descr,
+            url=url.url,
+            username=user.discord_username,
+            avatar_url=user.discord_avatar,
+        )
+
+    url_user.share = True
+    crud.url_user.update(url_user)
+    return {"success": True}
