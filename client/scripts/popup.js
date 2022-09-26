@@ -10,6 +10,11 @@ async function getActiveTabURL() {
   return tab.url 
 }
 
+async function getActiveTabTitle() {
+  let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true});
+  return tab.title 
+}
+
 function getIsBookmarkCheckedBool() {
  let elem = document.getElementById("bookmark-checkbox-input") 
  if (elem.checked == true) {
@@ -170,6 +175,13 @@ bookmarkSubmitRatingStarsCont.addEventListener("mouseout", async(e) => {
   clearSubmitBookmarkRatingStars()
   fillSubmitBookmarkRatingStarsBasedOnRating()
 })
+
+// get title after extension loads and set it to input
+document.addEventListener("DOMContentLoaded", async(e) => {
+  let bookmarkTitleInputElem = document.getElementById("bookmark-title-input")
+  let title = await getActiveTabTitle()
+  bookmarkTitleInputElem.value = title 
+});
 
 
 // BELOW CODE IS CHROME EXTENSION TUTORIAL -------------------------------------------------------------------------
