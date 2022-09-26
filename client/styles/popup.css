@@ -28,9 +28,11 @@
 	}
 }
 
-body {
+body, input, textarea {
 	font-family: "Montserrat", sans-serif;
 }
+
+
 
 #bookmark-checkbox-input, 
 #bookmark-checkbox-label, 
