@@ -110,6 +110,16 @@ body, input, textarea {
 	font-variation-settings: 'FILL' 1;
 }
 
+#create-bookmark-tab, #view-feed-tab {
+	cursor: pointer;
+	font-size: 20px;
+	border: 1px solid black;
+}
+
+.selected-tab {
+	background-color: black;
+	color: white;
+}
 
 
 

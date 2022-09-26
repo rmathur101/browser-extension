@@ -196,30 +196,33 @@ document.addEventListener("DOMContentLoaded", async(e) => {
   bookmarkTitleInputElem.value = title 
 });
 
+function showCreateBookmarkTab() {
+  let viewFeedContElem = document.getElementById('view-feed-cont')
+  viewFeedContElem.style.display = "none"
 
-// BELOW CODE IS CHROME EXTENSION TUTORIAL -------------------------------------------------------------------------
+  let createBookmarkContElem = document.getElementById('create-bookmark-cont')  
+  createBookmarkContElem.style.display = ""
 
-// Initialize button with user's preferred color
-// let changeColor = document.getElementById("changeColor");
+  document.getElementById('create-bookmark-tab').classList.add("selected-tab")
+  document.getElementById('view-feed-tab').classList.remove("selected-tab")
+}
 
-// chrome.storage.sync.get("color", ({ color }) => {
-//   changeColor.style.backgroundColor = color;
-// });
+function showViewFeedTab() {
+  let createBookmarkContElem = document.getElementById('create-bookmark-cont')  
+  createBookmarkContElem.style.display = "none"
 
-// When the button is clicked, inject setPageBackgroundColor into current page
-// changeColor.addEventListener("click", async () => {
-//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  let viewFeedContElem = document.getElementById('view-feed-cont')
+  viewFeedContElem.style.display = ""
 
-//   chrome.scripting.executeScript({
-//     target: { tabId: tab.id },
-//     func: setPageBackgroundColor,
-//   });
-// });
+  document.getElementById('view-feed-tab').classList.add("selected-tab")
+  document.getElementById('create-bookmark-tab').classList.remove("selected-tab")
+}
 
-// The body of this function will be executed as a content script inside the
-// current page
-// function setPageBackgroundColor() {
-//   chrome.storage.sync.get("color", ({ color }) => {
-//     document.body.style.backgroundColor = color;
-//   });
-// }
+let bookmarkTabElem = document.getElementById("create-bookmark-tab")
+bookmarkTabElem.addEventListener("click", async() => {
+  showCreateBookmarkTab()
+})
+let feedTabElem = document.getElementById("view-feed-tab")
+feedTabElem.addEventListener("click", async() => {
+  showViewFeedTab()
+})
