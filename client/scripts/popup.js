@@ -41,12 +41,23 @@ function getShareInfo() {}
 
 function getTagInfo() {}
 
+function getBookmarkTitle() {
+  return document.getElementById("bookmark-title-input").value
+}
+
 let submitBtn = document.getElementById("submit-btn");
 submitBtn.addEventListener("click", async () => {
   let tabURL = await getActiveTabURL()
   let isBookmarkChecked = getIsBookmarkCheckedBool() 
   let isShareChecked = getIsShareCheckedBool()
   let description = getDescription() 
+
+  // let bookmarkTitleInputVal = getBookmarkTitle()
+  // let canonicalTitle = await getActiveTabTitle()
+  // let customBookmarkTitle = null
+  // if (canonicalTitle != bookmarkTitleInputVal) {
+  //   customBookmarkTitle = bookmarkTitleInputVal
+  // }
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
       url: tabURL,
@@ -55,7 +66,9 @@ submitBtn.addEventListener("click", async () => {
       user_id: 2, // this should be test user, firecat@email.com
       tags: newTags,
       user_descr: description,
-      rating: rating
+      rating: rating,
+      // canonicalBookmarkTitle: canonicalTitle,
+      // customBookmarkTitle: customBookmarkTitle 
     })
     console.log(response)
   } catch (error) {
