@@ -1,7 +1,6 @@
 import requests
 import urllib
 
-
 class Oauth:
     def __init__(self, client_id, client_secret, redirect_uri, scope):
         self.client_id = client_id
