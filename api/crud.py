@@ -68,6 +68,16 @@ class CRUDUrlUser(CRUDBase[UrlUser, Engine]):
             )
             return session.exec(statement).one()
 
+    def update(self, model_obj: ModelType) -> None:
+        with Session(self.engine) as session, session.begin():
+            statement = update(self.model).where(
+                and_(
+                    self.model.user_id == model_obj.user_id,
+                    self.model.url_id == model_obj.url_id,
+                )
+            )
+            session.exec(statement.values(**model_obj.dict()))
+
 
 class CRUDUser(CRUDBase[User, Engine]):
     ...

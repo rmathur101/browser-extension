@@ -66,7 +66,9 @@ class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
     created_at: datetime = Field(default=datetime.utcnow(), nullable=False)
 
-    discord_id: Optional[int] = None
+    discord_id: Optional[int] = Field(
+        sa_column=Column(BigInteger(), default=None, autoincrement=False,)
+    )
     discord_username: Optional[str] = None
     discord_avatar: Optional[str] = None
 

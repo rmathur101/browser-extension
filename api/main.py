@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlalchemy.orm import Session
 import dotenv
-from discord import Oauth, send_message
+from discord_utils import Oauth, send_message
 
 
 config = dotenv.dotenv_values()
@@ -101,12 +101,7 @@ def create_url(
                 detail=f"The user {url_user.user_id} has not linked their discord account",
             )
         else:
-            send_message(
-                message=url_user.user_descr,
-                url=url_str,
-                username=user.discord_username,
-                avatar_url=user.discord_avatar,
-            )
+            send_message(message=url_user.user_descr, url=url_str, user=user)
 
     return url_user_created
 
@@ -144,24 +139,20 @@ async def share(user_id, url_id, descr):
     url = crud.url.get(url_id)
     url_user = crud.url_user.get(user_id, url_id)
 
-    if url_user.share:
-        raise HTTPException(
-            status_code=404, detail=f"The url {url.url} is already shared"
-        )
-
     if user.discord_id is None:
         raise HTTPException(
             status_code=404,
             detail=f"The user {user_id} has not linked their discord account",
         )
     else:
-        send_message(
-            message=descr,
-            url=url.url,
-            username=user.discord_username,
-            avatar_url=user.discord_avatar,
-        )
+        send_message(message=descr, url=url.url, user=user)
 
     url_user.share = True
     crud.url_user.update(url_user)
     return {"success": True}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
