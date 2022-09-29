@@ -52,23 +52,23 @@ submitBtn.addEventListener("click", async () => {
   let isShareChecked = getIsShareCheckedBool()
   let description = getDescription() 
 
-  // let bookmarkTitleInputVal = getBookmarkTitle()
-  // let canonicalTitle = await getActiveTabTitle()
-  // let customBookmarkTitle = null
-  // if (canonicalTitle != bookmarkTitleInputVal) {
-  //   customBookmarkTitle = bookmarkTitleInputVal
-  // }
+  let bookmarkTitleInputVal = getBookmarkTitle()
+  let canonicalTitle = await getActiveTabTitle()
+  let customBookmarkTitle = null
+  if (canonicalTitle != bookmarkTitleInputVal) {
+    customBookmarkTitle = bookmarkTitleInputVal
+  }
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
       url: tabURL,
       bookmark: isBookmarkChecked,
       share: isShareChecked,
-      user_id: 2, // this should be test user, firecat@email.com
+      user_id: 1, // this should be test user, firecat@email.com
       tags: newTags,
       user_descr: description,
       rating: rating,
-      // canonicalBookmarkTitle: canonicalTitle,
-      // customBookmarkTitle: customBookmarkTitle 
+      document_title: canonicalTitle,
+      custom_title: customBookmarkTitle 
     })
     console.log(response)
   } catch (error) {
