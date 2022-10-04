@@ -3,6 +3,8 @@
 
 let newTags = []
 let rating = null
+// temporary hardcoded USER_ID
+const USER_ID = 1
 
 async function getActiveTabURL() {
   let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true});
@@ -63,7 +65,7 @@ submitBtn.addEventListener("click", async () => {
       url: tabURL,
       bookmark: isBookmarkChecked,
       share: isShareChecked,
-      user_id: 1, // this should be test user, firecat@email.com
+      user_id: USER_ID, // this should be test user, firecat@email.com
       tags: newTags,
       user_descr: description,
       rating: rating,
@@ -226,3 +228,9 @@ let feedTabElem = document.getElementById("view-feed-tab")
 feedTabElem.addEventListener("click", async() => {
   showViewFeedTab()
 })
+
+let loginPageBtn = document.getElementById("login-page-btn")
+loginPageBtn.addEventListener("click", async() => {
+  chrome.tabs.create({url: 'views/login.html'}) 
+})
+
