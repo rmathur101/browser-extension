@@ -45,10 +45,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               return true
           }
       });
+      return true
   } else if (request.message === 'logout') {
       user_signed_in = false;
       sendResponse({success: true});
-      return false
   }
 });
 
