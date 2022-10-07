@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="../config/config.js" async></script>
     <script src="../scripts/axios.min.js" async></script>
-    <script src="../scripts/popup.js" async></script>
   </head>
   <body id="popup-container">
     <div id="tabs-cont">
       <span class="selected-tab" id="create-bookmark-tab">BOOKMARK</span>
+      <span id="view-bookmarks-tab">SAVED</span>
       <span id="view-feed-tab">FEED</span>
     </div>
     <br>
@@ -68,8 +68,19 @@
         <button id="login-page-btn">Login</button>
       </span>
     </div>
-    <div id="view-feed-cont" style="display: none">
-      THIS IS WHERE THE FEED WILL GO
+    <div id="view-bookmarks-cont" style="display: none;">
+      <table id="feed-table">
+        <thead>
+          <th>Name</th>
+          <th>Rating</th>
+          <th>Bookmark Date</th>
+        </thead>
+        <tbody id="bookmarks-table-body"></tbody>
+      </table>
     </div>
+    <div id="view-feed-cont" style="display: none">
+      THIS IS WHERE FEED GOES
+    </div>
+    <script src="../scripts/popup.js"></script>
   </body>
 </html>
