@@ -301,13 +301,14 @@ let populateUserFeed = async() => {
       <tr>
         <td>${url.custom_title || url.document_title}</td>
         <td>${(url.rating == null ? 'None' : url.rating)}</td>
-        <td>${url.created_at}</td>
+        <td>${moment(url.created_at).isValid() ? moment(url.created_at).format('MMM D YY') : '-'}</td>
       </tr>
      ` 
     }
     let feedTableBodyElem = document.getElementById("bookmarks-table-body")  
     feedTableBodyElem.innerHTML = tableRows
   } else {
+    console.log("Not able to retrieve urls from API!")
     alert("Not able to retrieve urls from API!")
   }
 }
