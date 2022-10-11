@@ -291,26 +291,57 @@ let getUserUrls = async() => {
 // TODO: to abstract to any table, should probably pass in the table id
 // need to create functions for getting the data from the url object
 let populateUserFeed = async() => {
+  let getTagsFromURL = (url) => {
+    if (url && url.tags && url.tags.length > 0) {
+      let returnStr = ''
+      for (const tag of url.tags) {
+        returnStr = returnStr + tag.name + ' '
+      }
+      return returnStr
+    } else {
+      return 'None'
+    }
+  }
+
+  let getURLLink = (url) => {
+    return url.url.url
+  }
+
   let urls = await getUserUrls()
   console.log("urls from response of getUserUrls():")
   console.log(urls)
+
+  // create table rows
   if (urls != null) {
     let tableRows = "" 
     for (const url of urls ) {
      tableRows = tableRows + `
       <tr>
-        <td>${url.custom_title || url.document_title}</td>
+        <td><a class="bookmarkURLLink" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
+        <td>${getTagsFromURL(url)}</td>
         <td>${(url.rating == null ? 'None' : url.rating)}</td>
         <td>${moment(url.created_at).isValid() ? moment(url.created_at).format('MMM D YY') : '-'}</td>
       </tr>
      ` 
     }
-    let feedTableBodyElem = document.getElementById("bookmarks-table-body")  
-    feedTableBodyElem.innerHTML = tableRows
+
+    // insert table rows
+    document.getElementById("bookmarks-table-body").innerHTML = tableRows
+
+    // add click listeners to all the links
+    let bookmarkURLLinks = document.getElementsByClassName('bookmarkURLLink')
+    for (const bookmarkURLLink of bookmarkURLLinks) {
+     bookmarkURLLink.addEventListener('click', openBookmarkOnClick) 
+    } 
   } else {
     console.log("Not able to retrieve urls from API!")
     alert("Not able to retrieve urls from API!")
   }
+}
+
+let openBookmarkOnClick = (e) => {
+  e.preventDefault()
+  chrome.tabs.create({url: e.target.href, active: false})
 }
 
 populateUserFeed()
