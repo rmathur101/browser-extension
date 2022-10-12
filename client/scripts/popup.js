@@ -77,7 +77,7 @@ submitBtn.addEventListener("click", async () => {
     }
   }
 
-  displayingLoadingStatus()
+  displayingLoadingStatus("Saving bookmark...")
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
       url: tabURL,
@@ -94,7 +94,7 @@ submitBtn.addEventListener("click", async () => {
     console.log(response)
 
     if (isResponseSuccess(response)) {
-      populateUserFeed()
+      await populateUserFeed()
       displayBookmarkSavedStatus()
     } else if (isResponseBookmarkDuplicate(response)) {
       displayBookmarkDuplicateStatus()
@@ -123,17 +123,17 @@ let displayBookmarkSavedStatus = () => {
 
 let displayBookmarkDuplicateStatus = () => {
   document.getElementById('status-cont').innerHTML = ''
-  document.getElementById('status-cont').innerHTML = "<span>This bookmark is already saved.<span>"
+  document.getElementById('status-cont').innerHTML = "<span>Bookmark already saved.<span>"
 }
 
-let displayErrorStatus = () => {
+let displayErrorStatus = (customErrorStatus=null) => {
   document.getElementById('status-cont').innerHTML = ''
-  document.getElementById('status-cont').innerHTML = "<span>F#$!. A bug is afoot.</span>"
+  document.getElementById('status-cont').innerHTML = `<span>${customErrorStatus ? customErrorStatus : 'F#$!. A bug is afoot.'}</span>`
 }
 
-let displayingLoadingStatus = () => {
+let displayingLoadingStatus = (customLoadingStatus=null) => {
   document.getElementById('status-cont').innerHTML = ''
-  document.getElementById('status-cont').innerHTML = "<span>Loading...</span>"
+  document.getElementById('status-cont').innerHTML = `<span>${customLoadingStatus ? customLoadingStatus : "Loading..."}</span>`
 }
 
 let displayStatusClear = () => {
@@ -348,12 +348,17 @@ loginPageBtn.addEventListener("click", async() => {
 
 let getUserUrls = async() => {
   let response = null
+  displayingLoadingStatus("Refreshing your bookmarks...")
   try {
     response = await axios.get(`${CONFIG.API_ENDPOINT}users/${USER_ID}`)
     if (response && response.data && response.data.urls) {
+      displayStatusClear()
       return response.data.urls
+    } else {
+      displayErrorStatus("Failed to refresh bookmarks.")
     }
   } catch (e) {
+    displayErrorStatus("Failed to refresh bookmarks.")
     console.log('error caught in getUserUrls(): ')
     console.log(e)
   }
@@ -389,14 +394,24 @@ let populateUserFeed = async() => {
   if (urls != null) {
     let tableRows = "" 
     for (const url of urls ) {
-     tableRows = tableRows + `
+      // if valid date, set date to month and day if this year, otherwise add year
+      let dateStr = '-'
+      let momentDate = moment(url.created_at)
+      if (momentDate.isValid() == true) {
+        if (momentDate.format('YYYY') == moment().format('YYYY')) {
+          dateStr = moment(url.created_at).format('MMM D')
+        } else {
+          dateStr = moment(url.created_at).format('MMM D, YY')
+        }
+      }
+      tableRows = tableRows + `
       <tr>
         <td><a class="bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
         <td>${getTagsFromURL(url)}</td>
         <td>${(url.rating == null ? 'None' : url.rating)}</td>
-        <td>${moment(url.created_at).isValid() ? moment(url.created_at).format('MMM D YY') : '-'}</td>
+        <td>${dateStr}</td>
       </tr>
-     ` 
+      ` 
     }
 
     // insert table rows
