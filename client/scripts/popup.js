@@ -416,7 +416,7 @@ let openBookmarkOnClick = (e) => {
   displayOpeningBookmarkInNewTabStatus() 
   e.preventDefault()
   chrome.tabs.create({url: e.target.href, active: false})
-  setTimeout(function() { displayStatusClear() }, 3000);
+  setTimeout(function() { displayStatusClear() }, 2000);
 }
 
 populateUserFeed()
