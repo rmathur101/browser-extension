@@ -60,6 +60,24 @@ submitBtn.addEventListener("click", async () => {
   if (canonicalTitle != bookmarkTitleInputVal) {
     customBookmarkTitle = bookmarkTitleInputVal
   }
+
+  let isResponseSuccess = (response) => {
+    if (response && response.status == 200) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  let isResponseBookmarkDuplicate = (response) => {
+    if (response && response.data && response.data.detail && (typeof response.data.detail == "string") && response.data.detail.includes("already exists")) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  displayingLoadingStatus()
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
       url: tabURL,
@@ -72,11 +90,59 @@ submitBtn.addEventListener("click", async () => {
       document_title: canonicalTitle,
       custom_title: customBookmarkTitle 
     })
+
     console.log(response)
+
+    if (isResponseSuccess(response)) {
+      displayBookmarkSavedStatus()
+    } else if (isResponseBookmarkDuplicate(response)) {
+      displayBookmarkDuplicateStatus()
+    } else {
+      displayErrorStatus()
+    }
   } catch (error) {
+    
     console.log(error)
+
+    // note it looks like response is part of the error, as opposed to success case where response is top level
+    if (isResponseSuccess(error.response)) {
+      displayBookmarkSavedStatus()
+    } else if (isResponseBookmarkDuplicate(error.response)) {
+      displayBookmarkDuplicateStatus()
+    } else {
+      displayErrorStatus()
+    }
   }
 })
+
+let displayBookmarkSavedStatus = () => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = "<span>Bookmark saved.<span>" 
+}
+
+let displayBookmarkDuplicateStatus = () => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = "<span>This bookmark is already saved.<span>"
+}
+
+let displayErrorStatus = () => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = "<span>F#$!. A bug is afoot.</span>"
+}
+
+let displayingLoadingStatus = () => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = "<span>Loading...</span>"
+}
+
+let displayStatusClear = () => {
+  document.getElementById('status-cont').innerHTML = ''
+}
+
+let displayOpeningBookmarkInNewTabStatus = () => {
+  displayStatusClear()
+  document.getElementById('status-cont').innerHTML = "<span>Opening in new tab...</span>"
+}
 
 let newTagCancelBtn = document.getElementById("new-tag-cancel-btn")
 newTagCancelBtn.addEventListener("click", async() => {
@@ -201,6 +267,7 @@ document.addEventListener("DOMContentLoaded", async(e) => {
 function toggleCreateBookmarkTab(on=true) {
   let tabContElem = document.getElementById('create-bookmark-cont')
   let tabElem = document.getElementById('create-bookmark-tab')
+
   if (on) {
     tabContElem.style.display = ""
     tabElem.classList.add("selected-tab")
@@ -238,18 +305,24 @@ function toggleViewBookmarksTab(on=true) {
 
 
 function showCreateBookmarkTab() {
+  displayStatusClear()
+
   toggleViewBookmarksTab(false)
   toggleViewFeedTab(false)
   toggleCreateBookmarkTab(true)
 }
 
 function showViewFeedTab() {
+  displayStatusClear()
+
   toggleViewBookmarksTab(false)
   toggleCreateBookmarkTab(false)
   toggleViewFeedTab(true)
 }
 
 function showViewBooksmarksTab() {
+  displayStatusClear()
+
   toggleCreateBookmarkTab(false)
   toggleViewFeedTab(false)
   toggleViewBookmarksTab(true)
@@ -317,7 +390,7 @@ let populateUserFeed = async() => {
     for (const url of urls ) {
      tableRows = tableRows + `
       <tr>
-        <td><a class="bookmarkURLLink" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
+        <td><a class="bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
         <td>${getTagsFromURL(url)}</td>
         <td>${(url.rating == null ? 'None' : url.rating)}</td>
         <td>${moment(url.created_at).isValid() ? moment(url.created_at).format('MMM D YY') : '-'}</td>
@@ -329,7 +402,7 @@ let populateUserFeed = async() => {
     document.getElementById("bookmarks-table-body").innerHTML = tableRows
 
     // add click listeners to all the links
-    let bookmarkURLLinks = document.getElementsByClassName('bookmarkURLLink')
+    let bookmarkURLLinks = document.getElementsByClassName('bookmark-URL-link')
     for (const bookmarkURLLink of bookmarkURLLinks) {
      bookmarkURLLink.addEventListener('click', openBookmarkOnClick) 
     } 
@@ -340,8 +413,10 @@ let populateUserFeed = async() => {
 }
 
 let openBookmarkOnClick = (e) => {
+  displayOpeningBookmarkInNewTabStatus() 
   e.preventDefault()
   chrome.tabs.create({url: e.target.href, active: false})
+  setTimeout(function() { displayStatusClear() }, 3000);
 }
 
 populateUserFeed()
