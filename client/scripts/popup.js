@@ -94,6 +94,7 @@ submitBtn.addEventListener("click", async () => {
     console.log(response)
 
     if (isResponseSuccess(response)) {
+      populateUserFeed()
       displayBookmarkSavedStatus()
     } else if (isResponseBookmarkDuplicate(response)) {
       displayBookmarkDuplicateStatus()
