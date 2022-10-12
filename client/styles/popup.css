@@ -121,5 +121,13 @@ body, input, textarea {
 	color: white;
 }
 
+.bookmark-URL-link {
+	text-decoration: underline;
+	color: black;
+}
+.bookmark-URL-link:hover {
+	color: green;
+}
+
 
 
