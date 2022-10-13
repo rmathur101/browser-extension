@@ -41,5 +41,9 @@ async def update_user_discord_data(user_id: int, code: str):
     )
     crud.user.update(user)
 
+    # TODO: Check if user has shared any urls in discord
+    # if so update user_id for these urls and delete user
+    # created for discord integration
+
     return {"success": True}
 

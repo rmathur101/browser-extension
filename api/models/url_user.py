@@ -4,6 +4,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import Column, BigInteger, ForeignKey, ForeignKeyConstraint
 from datetime import datetime
 from pydantic import Extra
+from .mixins import Timestamp
 
 if TYPE_CHECKING:
     from .tag import Tag, TagRead
@@ -31,14 +32,19 @@ class UrlUserBase(SQLModel):
     custom_title: Optional[str] = None
 
 
-class UrlUser(UrlUserBase, table=True):
+class UrlUser(Timestamp, UrlUserBase, table=True):
     url_id: int = Field(
         sa_column=Column(
             BigInteger(), ForeignKey("url.id"), primary_key=True, index=True
         )
     )
-
-    created_at: datetime = Field(default=datetime.utcnow, nullable=False)
+    discord_reactions: Optional[int] = None
+    discord_msg_id: Optional[int] = Field(
+        sa_column=Column(BigInteger(), default=None, autoincrement=False, nullable=True)
+    )
+    discord_channel_id: Optional[int] = Field(
+        sa_column=Column(BigInteger(), default=None, autoincrement=False, nullable=True)
+    )
 
     user: Optional["User"] = Relationship(back_populates="urls")
     url: "Url" = Relationship(back_populates="url_users")

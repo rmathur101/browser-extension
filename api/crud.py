@@ -1,7 +1,9 @@
+from operator import or_
 from typing import Generic, Type, TypeVar, List
 from sqlmodel import SQLModel, Session, select, delete, update, and_
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.future import Engine
+from api import models
 from api.models import User, UrlUser, Url, Tag
 from api.db import engine
 from psycopg2.extras import execute_values
@@ -61,14 +63,14 @@ class CRUDBase(Generic[ModelType, EngineType]):
 
 
 class CRUDUrlUser(CRUDBase[UrlUser, Engine]):
-    def get(self, user_id: int, url_id: int):
+    def get(self, user_id: int, url_id: int) -> models.UrlUser:
         with Session(self.engine) as session:
             statement = select(self.model).where(
                 and_(self.model.user_id == user_id, self.model.url_id == url_id,)
             )
             return session.exec(statement).one()
 
-    def update(self, model_obj: ModelType) -> None:
+    def update(self, model_obj: models.UrlUser) -> None:
         with Session(self.engine) as session, session.begin():
             statement = update(self.model).where(
                 and_(
@@ -79,12 +81,23 @@ class CRUDUrlUser(CRUDBase[UrlUser, Engine]):
             session.exec(statement.values(**model_obj.dict()))
         return self.get(user_id=model_obj.user_id, url_id=model_obj.url_id)
 
-    def delete(self, model_obj: ModelType) -> None:
+    def delete(self, model_obj: models.UrlUser) -> None:
         with Session(self.engine) as session, session.begin():
             statement = delete(self.model).where(
                 and_(
                     self.model.user_id == model_obj.user_id,
                     self.model.url_id == model_obj.url_id,
+                )
+            )
+            session.exec(statement)
+
+    def upsert(self, model_obj: models.UrlUser):
+        with Session(self.engine) as session, session.begin():
+            statement = (
+                pg_insert(self.model)
+                .values(**model_obj.dict())
+                .on_conflict_do_update(
+                    index_elements=["user_id", "url_id"], set_=model_obj.dict()
                 )
             )
             session.exec(statement)
@@ -100,7 +113,10 @@ class CRUDTag(CRUDBase[Tag, Engine]):
 
 
 class CRUDUser(CRUDBase[User, Engine]):
-    ...
+    def get_by_discord_id(self, discord_id: int):
+        with Session(self.engine) as session:
+            statement = select(self.model).where(self.model.discord_id == discord_id)
+            return session.exec(statement).one_or_none()
 
 
 class CRUDUrl(CRUDBase[Url, Engine]):

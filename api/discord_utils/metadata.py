@@ -18,7 +18,7 @@ async def on_ready():
     dump_metadata_threads.start()
 
 
-@tasks.loop(seconds=10)
+@tasks.loop(seconds=60*60)
 async def dump_metadata_threads():
     server = client.get_guild(int(config["SERVER_ID"]))
 
