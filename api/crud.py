@@ -77,6 +77,26 @@ class CRUDUrlUser(CRUDBase[UrlUser, Engine]):
                 )
             )
             session.exec(statement.values(**model_obj.dict()))
+        return self.get(user_id=model_obj.user_id, url_id=model_obj.url_id)
+
+    def delete(self, model_obj: ModelType) -> None:
+        with Session(self.engine) as session, session.begin():
+            statement = delete(self.model).where(
+                and_(
+                    self.model.user_id == model_obj.user_id,
+                    self.model.url_id == model_obj.url_id,
+                )
+            )
+            session.exec(statement)
+
+
+class CRUDTag(CRUDBase[Tag, Engine]):
+    def get_url_user_tags(self, user_id: int, url_id: int):
+        with Session(self.engine) as session:
+            statement = select(self.model).where(
+                and_(self.model.user_id == user_id, self.model.url_id == url_id,)
+            )
+            return session.exec(statement).all()
 
 
 class CRUDUser(CRUDBase[User, Engine]):
@@ -84,10 +104,6 @@ class CRUDUser(CRUDBase[User, Engine]):
 
 
 class CRUDUrl(CRUDBase[Url, Engine]):
-    ...
-
-
-class CRUDTag(CRUDBase[Tag, Engine]):
     ...
 
 

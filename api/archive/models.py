@@ -31,6 +31,8 @@ class UrlUserBase(SQLModel):
     rating: Optional[Rating] = None
     bookmark: Optional[bool] = None
     share: Optional[bool] = None
+    document_title: Optional[str] = None
+    custom_title: Optional[str] = None
 
 
 class UrlUser(UrlUserBase, table=True):
