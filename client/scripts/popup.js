@@ -3,11 +3,18 @@
 
 let newTags = []
 let rating = null
+// temporary hardcoded USER_ID
+const USER_ID = 1
 
 async function getActiveTabURL() {
   let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true});
   // TODO: need to handle the case where we are not able to find the tab (active: true, etc.)
   return tab.url 
+}
+
+async function getActiveTabTitle() {
+  let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true});
+  return tab.title 
 }
 
 function getIsBookmarkCheckedBool() {
@@ -36,27 +43,107 @@ function getShareInfo() {}
 
 function getTagInfo() {}
 
+function getBookmarkTitle() {
+  return document.getElementById("bookmark-title-input").value
+}
+
 let submitBtn = document.getElementById("submit-btn");
 submitBtn.addEventListener("click", async () => {
   let tabURL = await getActiveTabURL()
   let isBookmarkChecked = getIsBookmarkCheckedBool() 
   let isShareChecked = getIsShareCheckedBool()
   let description = getDescription() 
+
+  let bookmarkTitleInputVal = getBookmarkTitle()
+  let canonicalTitle = await getActiveTabTitle()
+  let customBookmarkTitle = null
+  if (canonicalTitle != bookmarkTitleInputVal) {
+    customBookmarkTitle = bookmarkTitleInputVal
+  }
+
+  let isResponseSuccess = (response) => {
+    if (response && response.status == 200) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  let isResponseBookmarkDuplicate = (response) => {
+    if (response && response.data && response.data.detail && (typeof response.data.detail == "string") && response.data.detail.includes("already exists")) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  displayingLoadingStatus("Saving bookmark...")
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
       url: tabURL,
       bookmark: isBookmarkChecked,
       share: isShareChecked,
-      user_id: 2, // this should be test user, firecat@email.com
+      user_id: USER_ID, // this should be test user, firecat@email.com
       tags: newTags,
       user_descr: description,
-      rating: rating
+      rating: rating,
+      document_title: canonicalTitle,
+      custom_title: customBookmarkTitle 
     })
+
     console.log(response)
+
+    if (isResponseSuccess(response)) {
+      await populateUserFeed()
+      displayBookmarkSavedStatus()
+    } else if (isResponseBookmarkDuplicate(response)) {
+      displayBookmarkDuplicateStatus()
+    } else {
+      displayErrorStatus()
+    }
   } catch (error) {
+    
     console.log(error)
+
+    // note it looks like response is part of the error, as opposed to success case where response is top level
+    if (isResponseSuccess(error.response)) {
+      displayBookmarkSavedStatus()
+    } else if (isResponseBookmarkDuplicate(error.response)) {
+      displayBookmarkDuplicateStatus()
+    } else {
+      displayErrorStatus()
+    }
   }
 })
+
+let displayBookmarkSavedStatus = () => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = "<span>Bookmark saved.<span>" 
+}
+
+let displayBookmarkDuplicateStatus = () => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = "<span>Bookmark already saved.<span>"
+}
+
+let displayErrorStatus = (customErrorStatus=null) => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = `<span>${customErrorStatus ? customErrorStatus : 'F#$!. A bug is afoot.'}</span>`
+}
+
+let displayingLoadingStatus = (customLoadingStatus=null) => {
+  document.getElementById('status-cont').innerHTML = ''
+  document.getElementById('status-cont').innerHTML = `<span>${customLoadingStatus ? customLoadingStatus : "Loading..."}</span>`
+}
+
+let displayStatusClear = () => {
+  document.getElementById('status-cont').innerHTML = ''
+}
+
+let displayOpeningBookmarkInNewTabStatus = () => {
+  displayStatusClear()
+  document.getElementById('status-cont').innerHTML = "<span>Opening in new tab...</span>"
+}
 
 let newTagCancelBtn = document.getElementById("new-tag-cancel-btn")
 newTagCancelBtn.addEventListener("click", async() => {
@@ -171,30 +258,181 @@ bookmarkSubmitRatingStarsCont.addEventListener("mouseout", async(e) => {
   fillSubmitBookmarkRatingStarsBasedOnRating()
 })
 
+// get title after extension loads and set it to input
+document.addEventListener("DOMContentLoaded", async(e) => {
+  let bookmarkTitleInputElem = document.getElementById("bookmark-title-input")
+  let title = await getActiveTabTitle()
+  bookmarkTitleInputElem.value = title 
+});
 
-// BELOW CODE IS CHROME EXTENSION TUTORIAL -------------------------------------------------------------------------
+function toggleCreateBookmarkTab(on=true) {
+  let tabContElem = document.getElementById('create-bookmark-cont')
+  let tabElem = document.getElementById('create-bookmark-tab')
 
-// Initialize button with user's preferred color
-// let changeColor = document.getElementById("changeColor");
+  if (on) {
+    tabContElem.style.display = ""
+    tabElem.classList.add("selected-tab")
+  } else {
+    tabContElem.style.display = "none"
+    tabElem.classList.remove("selected-tab")
+  }
+}
 
-// chrome.storage.sync.get("color", ({ color }) => {
-//   changeColor.style.backgroundColor = color;
-// });
+function toggleViewFeedTab(on=true) {
+  let tabContElem = document.getElementById('view-feed-cont')
+  let tabElem = document.getElementById('view-feed-tab')
 
-// When the button is clicked, inject setPageBackgroundColor into current page
-// changeColor.addEventListener("click", async () => {
-//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (on) {
+    tabContElem.style.display = ""
+    tabElem.classList.add("selected-tab")
+  } else {
+    tabContElem.style.display = "none"
+    tabElem.classList.remove("selected-tab")
+  }
+}
 
-//   chrome.scripting.executeScript({
-//     target: { tabId: tab.id },
-//     func: setPageBackgroundColor,
-//   });
-// });
+function toggleViewBookmarksTab(on=true) {
+  let tabContElem = document.getElementById('view-bookmarks-cont')
+  let tabElem = document.getElementById('view-bookmarks-tab')
 
-// The body of this function will be executed as a content script inside the
-// current page
-// function setPageBackgroundColor() {
-//   chrome.storage.sync.get("color", ({ color }) => {
-//     document.body.style.backgroundColor = color;
-//   });
-// }
+  if (on) {
+    tabContElem.style.display = ""
+    tabElem.classList.add('selected-tab') 
+  } else {
+    tabContElem.style.display = "none"
+    tabElem.classList.remove('selected-tab') 
+  }
+}
+
+
+function showCreateBookmarkTab() {
+  displayStatusClear()
+
+  toggleViewBookmarksTab(false)
+  toggleViewFeedTab(false)
+  toggleCreateBookmarkTab(true)
+}
+
+function showViewFeedTab() {
+  displayStatusClear()
+
+  toggleViewBookmarksTab(false)
+  toggleCreateBookmarkTab(false)
+  toggleViewFeedTab(true)
+}
+
+function showViewBooksmarksTab() {
+  displayStatusClear()
+
+  toggleCreateBookmarkTab(false)
+  toggleViewFeedTab(false)
+  toggleViewBookmarksTab(true)
+}
+
+let bookmarkTabElem = document.getElementById("create-bookmark-tab")
+bookmarkTabElem.addEventListener("click", async() => {
+  showCreateBookmarkTab()
+})
+let feedTabElem = document.getElementById("view-feed-tab")
+feedTabElem.addEventListener("click", async() => {
+  showViewFeedTab()
+})
+document.getElementById("view-bookmarks-tab").addEventListener("click", async() => {
+  showViewBooksmarksTab()
+})
+
+let loginPageBtn = document.getElementById("login-page-btn")
+loginPageBtn.addEventListener("click", async() => {
+  chrome.tabs.create({url: 'views/login.html'}) 
+})
+
+let getUserUrls = async() => {
+  let response = null
+  displayingLoadingStatus("Refreshing your bookmarks...")
+  try {
+    response = await axios.get(`${CONFIG.API_ENDPOINT}users/${USER_ID}`)
+    if (response && response.data && response.data.urls) {
+      displayStatusClear()
+      return response.data.urls
+    } else {
+      displayErrorStatus("Failed to refresh bookmarks.")
+    }
+  } catch (e) {
+    displayErrorStatus("Failed to refresh bookmarks.")
+    console.log('error caught in getUserUrls(): ')
+    console.log(e)
+  }
+  console.log('response from request in getUserUrls():')
+  console.log(response)
+  return response
+}
+
+// TODO: to abstract to any table, should probably pass in the table id
+// need to create functions for getting the data from the url object
+let populateUserFeed = async() => {
+  let getTagsFromURL = (url) => {
+    if (url && url.tags && url.tags.length > 0) {
+      let returnStr = ''
+      for (const tag of url.tags) {
+        returnStr = returnStr + tag.name + ' '
+      }
+      return returnStr
+    } else {
+      return 'None'
+    }
+  }
+
+  let getURLLink = (url) => {
+    return url.url.url
+  }
+
+  let urls = await getUserUrls()
+  console.log("urls from response of getUserUrls():")
+  console.log(urls)
+
+  // create table rows
+  if (urls != null) {
+    let tableRows = "" 
+    for (const url of urls ) {
+      // if valid date, set date to month and day if this year, otherwise add year
+      let dateStr = '-'
+      let momentDate = moment(url.created_at)
+      if (momentDate.isValid() == true) {
+        if (momentDate.format('YYYY') == moment().format('YYYY')) {
+          dateStr = moment(url.created_at).format('MMM D')
+        } else {
+          dateStr = moment(url.created_at).format('MMM D, YY')
+        }
+      }
+      tableRows = tableRows + `
+      <tr>
+        <td><a class="bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
+        <td>${getTagsFromURL(url)}</td>
+        <td>${(url.rating == null ? 'None' : url.rating)}</td>
+        <td>${dateStr}</td>
+      </tr>
+      ` 
+    }
+
+    // insert table rows
+    document.getElementById("bookmarks-table-body").innerHTML = tableRows
+
+    // add click listeners to all the links
+    let bookmarkURLLinks = document.getElementsByClassName('bookmark-URL-link')
+    for (const bookmarkURLLink of bookmarkURLLinks) {
+     bookmarkURLLink.addEventListener('click', openBookmarkOnClick) 
+    } 
+  } else {
+    console.log("Not able to retrieve urls from API!")
+    alert("Not able to retrieve urls from API!")
+  }
+}
+
+let openBookmarkOnClick = (e) => {
+  displayOpeningBookmarkInNewTabStatus() 
+  e.preventDefault()
+  chrome.tabs.create({url: e.target.href, active: false})
+  setTimeout(function() { displayStatusClear() }, 2000);
+}
+
+populateUserFeed()
