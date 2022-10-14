@@ -136,8 +136,12 @@ let displayingLoadingStatus = (customLoadingStatus=null) => {
   document.getElementById('status-cont').innerHTML = `<span>${customLoadingStatus ? customLoadingStatus : "Loading..."}</span>`
 }
 
-let displayStatusClear = () => {
-  document.getElementById('status-cont').innerHTML = ''
+let displayStatusClear = (timeout=null) => {
+  if (timeout != null) {
+    setTimeout(function() { document.getElementById('status-cont').innerHTML = '' }, timeout);
+  } else {
+    document.getElementById('status-cont').innerHTML = ''
+  }
 }
 
 let displayOpeningBookmarkInNewTabStatus = () => {
@@ -352,7 +356,7 @@ let getUserUrls = async() => {
   try {
     response = await axios.get(`${CONFIG.API_ENDPOINT}users/${USER_ID}`)
     if (response && response.data && response.data.urls) {
-      displayStatusClear()
+      displayStatusClear(500)
       return response.data.urls
     } else {
       displayErrorStatus("Failed to refresh bookmarks.")
@@ -406,16 +410,21 @@ let populateUserFeed = async() => {
       }
       tableRows = tableRows + `
       <tr>
-        <td><a class="bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
-        <td>${getTagsFromURL(url)}</td>
-        <td>${(url.rating == null ? 'None' : url.rating)}</td>
-        <td>${dateStr}</td>
+        <td class="bookmark-title"><a class="bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
+        <td class="bookmark-tags">${getTagsFromURL(url)}</td>
+        <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
+        <td class="bookmark-date">${dateStr}</td>
       </tr>
       ` 
     }
 
     // insert table rows
-    document.getElementById("bookmarks-table-body").innerHTML = tableRows
+    document.getElementById("saved-bookmarks-table-body").innerHTML = tableRows
+
+    let options = {
+      valueNames: [ 'bookmark-title', 'bookmark-tags' ]
+    };
+    let savedBookmarksTable = new List('saved-bookmarks-table-cont', options);
 
     // add click listeners to all the links
     let bookmarkURLLinks = document.getElementsByClassName('bookmark-URL-link')
@@ -432,7 +441,8 @@ let openBookmarkOnClick = (e) => {
   displayOpeningBookmarkInNewTabStatus() 
   e.preventDefault()
   chrome.tabs.create({url: e.target.href, active: false})
-  setTimeout(function() { displayStatusClear() }, 2000);
+  // setTimeout(function() { displayStatusClear() }, 2000);
+  displayStatusClear(2000)
 }
 
 populateUserFeed()
