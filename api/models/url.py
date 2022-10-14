@@ -19,9 +19,8 @@ class Url(UrlBase, table=True):
         )
     )
     url_users: List["UrlUser"] = Relationship(back_populates="url")
-    # user: List["User"] = Relationship(back_populates="urls", link_model=UrlUser)
-
-    # tags: Optional[List["Tag"]] = Relationship(back_populates="url", link_model=UrlUser)
+    url_title: Optional[str] = None
+    embedded: Optional[bool] = False
 
 
 class UrlCreate(UrlBase):

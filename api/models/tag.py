@@ -25,7 +25,7 @@ class Tag(TagBase, table=True):
 
     url_id: int = Field(sa_column=Column(BigInteger(), primary_key=True, index=True))
     user_id: int = Field(index=True, primary_key=True)
-    created_at: datetime = Field(default=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default=datetime.utcnow(), nullable=False)
     url_user: "UrlUser" = Relationship(back_populates="tags")
 
 

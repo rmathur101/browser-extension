@@ -8,14 +8,11 @@ if TYPE_CHECKING:
     from .url_user import UrlUser, UrlUserRead
 
 
-Field(default_factory=datetime.utcnow, nullable=False)
-
-
 class UserBase(SQLModel):
     email: Optional[str] = Field(index=True)
 
 
-class User(Timestamp, UserBase, table=True):
+class User(UserBase, Timestamp, table=True):
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
     discord_id: Optional[int] = Field(
         sa_column=Column(BigInteger(), default=None, autoincrement=False,)

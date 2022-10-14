@@ -32,7 +32,7 @@ class UrlUserBase(SQLModel):
     custom_title: Optional[str] = None
 
 
-class UrlUser(Timestamp, UrlUserBase, table=True):
+class UrlUser(UrlUserBase, Timestamp, table=True):
     url_id: int = Field(
         sa_column=Column(
             BigInteger(), ForeignKey("url.id"), primary_key=True, index=True

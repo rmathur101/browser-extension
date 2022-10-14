@@ -21,7 +21,7 @@ def discord2db():
         channels = json.load(f)
 
     discord2json(channels)
-    # json2db()
+    json2db()
 
 
 def discord2json(channels):
@@ -56,8 +56,8 @@ def json2db():
         [(folder, folder.name) for folder in (DATA_DIR / "raw_message_data").iterdir()],
         key=lambda x: x[1],
     )
-    latest_data_dir = dirs_sorted_by_time[-1][0]
-    for fp in Path(latest_data_dir).iterdir():
+    latest_discord_dump_dir = dirs_sorted_by_time[-1][0]
+    for fp in Path(latest_discord_dump_dir).iterdir():
         with fp.open() as f:
             channel = json.load(f)
 
@@ -72,7 +72,9 @@ def upsert_channel_messages_with_urls(channel):
             author = msg["author"]
             user = crud.user.get_by_discord_id(int(author["id"]))
             if not user:
-                user = models.UserCreate(
+                # Create temporary user for associating links shared on
+                # discord with a discord id.
+                user = models.User(
                     email="discord_only",
                     discord_id=int(author["id"]),
                     discord_username=author["name"],
@@ -108,8 +110,9 @@ def upsert_url(user, channel, msg, msg_urls):
             created_at=pd.to_datetime(msg["timestamp"]),
             user_descr=msg["content"],
             discord_msg_id=msg["id"],
-            discord_channel_id=channel["id"],
+            discord_channel_id=channel["channel"]["id"],
             discord_reactions=sum([reaction["count"] for reaction in msg["reactions"]]),
+            share=True,
         )
         crud.url_user.upsert(url_user)
 

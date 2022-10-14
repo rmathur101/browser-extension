@@ -13,6 +13,7 @@ UPDATE_FIELDS = (
     "custom_title",
     "metadata_descr",
     "document_title",
+    "bookmark",
 )
 
 
@@ -38,7 +39,7 @@ def create_url_user(
         url_user_created = crud.url_user.create(url_user)
     except IntegrityError:
         raise HTTPException(
-            status_code=404,
+            status_code=200,
             detail=f"The url {url_str} already exists for user {url_user.user_id}",
         )
 
@@ -66,14 +67,8 @@ def create_url_user(
 async def update_delete_url_user(url_id, url_user: models.UrlUserUpdateApi):
     url_user = models.UrlUserUpdate(url_id=url_id, **url_user.dict())
 
-    # Check if url should be deleted and if so delete it.
-    if url_user.bookmark == False:
-        crud.url_user.delete(url_user)
-        return True
-
     # Check if url metadata should be updated and if so update it.
     url_user_db = crud.url_user.get(user_id=url_user.user_id, url_id=url_id)
-
     url_user_update = url_user.dict(exclude_unset=True)
     if not url_user_update.keys().isdisjoint(UPDATE_FIELDS):
         url_user_update = url_user_db.copy(update=url_user_update)
@@ -100,6 +95,8 @@ async def update_delete_url_user(url_id, url_user: models.UrlUserUpdateApi):
     return url_user_updated
 
 
+# FIXME: I dont think this is working, Test out when debugging. Also keep all
+# arguments in body
 @router.get("/urluser/{url_id}", response_model=models.UrlUserRead)
 async def read_url_user(*, session: Session = Depends(get_session), url_id: int):
     url_user = session.get(models.UrlUser, url_id)

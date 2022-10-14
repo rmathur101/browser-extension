@@ -1,3 +1,29 @@
+# from typing import List
+# from api import models, crud
+# from db import get_session
+# from fastapi import Depends, HTTPException, Query, APIRouter
+# from sqlalchemy.orm import Session
+
+# router = APIRouter()
+
+
+# @router.get("/urls/")
+# def get_url_list(
+#     sort_by: str = "recent", offset=0, limit: int = Query(default=100, lte=500)
+# ):
+#     ...
+
+
+# @router.get("/urls/{url_id}")
+# def get_url_stats(
+#     offset: int = 0, limit: int = Query(default=100, lte=500),
+# ):
+#     url = crud.user.get_multi(offset, limit)
+
+#     if url is None:
+#         raise HTTPException(status_code=404, detail="User not found")
+
+#     return users
 
 
 # TODO: Add endpoint for getting url with relevant stats

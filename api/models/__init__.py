@@ -8,6 +8,7 @@ from .url_user import (
     UrlUserUpdate,
     UrlUserUpdateApi,
 )
+from .discord import DiscordAddUserData
 
 # Solving circular imports hack, see: https://github.com/tiangolo/sqlmodel/issues/121
 Tag.update_forward_refs(UrlUser=UrlUser)
