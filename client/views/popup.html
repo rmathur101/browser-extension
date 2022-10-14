@@ -68,15 +68,18 @@
       </span>
     </div>
     <div id="view-bookmarks-cont" style="display: none;">
-      <table id="feed-table">
-        <thead>
-          <th>Name</th>
-          <th>Tags</th>
-          <th>Rating</th>
-          <th>Bookmark Date</th>
-        </thead>
-        <tbody id="bookmarks-table-body"></tbody>
-      </table>
+      <div id="saved-bookmarks-table-cont">
+        <input type="search" class="search" placeholder="normal search">
+        <table id="saved-bookmarks-table">
+          <thead>
+            <th>Name</th>
+            <th>Tags</th>
+            <th>Rating</th>
+            <th>Bookmark Date</th>
+          </thead>
+          <tbody class="list" id="saved-bookmarks-table-body"></tbody>
+        </table>
+      </div>
     </div>
     <div id="view-feed-cont" style="display: none">
       THIS IS WHERE FEED GOES
@@ -85,5 +88,6 @@
     <script src="../scripts/axios.min.js"></script>
     <script src="../scripts/moment.min.js"></script>
     <script src="../scripts/popup.js"></script>
+    <script src="../scripts/list.js"></script>
   </body>
 </html>
