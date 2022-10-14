@@ -31,6 +31,8 @@ class UrlUserBase(SQLModel):
     rating: Optional[Rating] = None
     bookmark: Optional[bool] = None
     share: Optional[bool] = None
+    document_title: Optional[str] = None
+    custom_title: Optional[str] = None
 
 
 class UrlUser(UrlUserBase, table=True):
@@ -66,7 +68,9 @@ class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
     created_at: datetime = Field(default=datetime.utcnow(), nullable=False)
 
-    discord_id: Optional[int] = None
+    discord_id: Optional[int] = Field(
+        sa_column=Column(BigInteger(), default=None, autoincrement=False,)
+    )
     discord_username: Optional[str] = None
     discord_avatar: Optional[str] = None
 
