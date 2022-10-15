@@ -54,10 +54,11 @@ class CRUDBase(Generic[ModelType, EngineType]):
             session.exec(statement)
 
     def insert_if_not_exists(self, model_obj: Url) -> None:
+        model_update = model_obj.dict(exclude_unset=True)
         with Session(self.engine) as session, session.begin():
             statement = (
                 pg_insert(self.model)
-                .values(**model_obj.dict())
+                .values(**model_update)
                 .on_conflict_do_nothing(index_elements=["id"])
             )
             session.exec(statement)
@@ -77,7 +78,7 @@ class CRUDUrlUser(CRUDBase[UrlUser, Engine]):
             statement = select(self.model).where(
                 and_(self.model.user_id == user_id, self.model.url_id == url_id,)
             )
-            return session.exec(statement).one()
+            return session.exec(statement).one_or_none()
 
     def update(self, model_obj: models.UrlUser) -> None:
         model_update = model_obj.dict(exclude_unset=True)

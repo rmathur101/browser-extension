@@ -26,7 +26,7 @@ def create_url_user(
     del url_user.url
 
     url_id = utils.str2int(url_str)
-    url = models.UrlCreate(id=url_id, url=url_str)
+    url = models.UrlCreate(id=url_id, url=url_str, title=url_user.url_title)
     crud.url.insert_if_not_exists(url)
 
     # Get tags
@@ -39,8 +39,7 @@ def create_url_user(
         url_user_created = crud.url_user.create(url_user)
     except IntegrityError:
         raise HTTPException(
-            status_code=200,
-            detail=f"The url {url_str} already exists for user {url_user.user_id}",
+            status_code=200, detail=f"The url {url_str} is already bookmarked",
         )
 
     # # Create tags
@@ -52,7 +51,9 @@ def create_url_user(
     # Get created url
     url_user_created = crud.url_user.get(user_id=url_user.user_id, url_id=url_id)
     url_user_created = models.UrlUserRead(
-        url=models.UrlRead(url=url_str), tags=tags_created, **url_user_created.dict()
+        url=models.UrlRead(url=url_str, title=url_user.url_title),
+        tags=tags_created,
+        **url_user_created.dict(),
     )
 
     # Check if url should be shared. And if so share to discord.
@@ -65,10 +66,20 @@ def create_url_user(
 
 @router.post("/urluser/{url_id}", response_model=models.UrlUserRead)
 async def update_delete_url_user(url_id, url_user: models.UrlUserUpdateApi):
-    url_user = models.UrlUserUpdate(url_id=url_id, **url_user.dict())
+    url_user = models.UrlUserUpdate(url_id=url_id, **url_user.dict(exclude_unset=True))
+
+    # Get tags
+    tags = url_user.tags
+    del url_user.tags
 
     # Check if url metadata should be updated and if so update it.
     url_user_db = crud.url_user.get(user_id=url_user.user_id, url_id=url_id)
+    if url_user_db is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"The url {url_id} does not exist for user {url_user.user_id}",
+        )
+
     url_user_update = url_user.dict(exclude_unset=True)
     if not url_user_update.keys().isdisjoint(UPDATE_FIELDS):
         url_user_update = url_user_db.copy(update=url_user_update)
@@ -83,8 +94,8 @@ async def update_delete_url_user(url_id, url_user: models.UrlUserUpdateApi):
         share_url_to_discord(user, url, url_user_updated.user_descr)
 
     # check if tags should be updated
-    if url_user.tags:
-        tags_updated = update_tags(tags=url_user.tags, url_user=url_user_updated)
+    if tags:
+        tags_updated = update_tags(tags=tags, url_user=url_user_updated)
     else:
         tags_updated = crud.tag.get_url_user_tags(
             url_id=url_user_updated.url_id, user_id=url_user_updated.user_id
@@ -127,7 +138,7 @@ def update_tags(tags, url_user):
     tags_db = crud.tag.get_url_user_tags(
         url_id=url_user.url_id, user_id=url_user.user_id
     )
-    tags_db = set(tag.name for tag in tags)
+    tags_db = set(tag.name for tag in tags_db)
 
     tags_create = tags - tags_db
     tags_delete = tags_db - tags

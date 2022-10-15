@@ -9,6 +9,10 @@ router = APIRouter()
 
 @router.post("/users/", response_model=models.UserRead)
 def create_user(user: models.UserCreate):
+    user_db = crud.user.where(dict(email=user.email))
+    if user_db:
+        raise HTTPException(status_code=200, detail="Email already registered")
+
     user_created = crud.user.create(user)
     return user_created
 
@@ -22,7 +26,7 @@ def read_users(
 
 
 @router.get("/users/{user_id}", response_model=models.UserReadWithUrls)
-def read_user(*, session: Session = Depends(get_session), user_id: int):
+def read_user_with_urls(*, session: Session = Depends(get_session), user_id: int):
     user = session.get(models.User, user_id)
 
     if user is None:

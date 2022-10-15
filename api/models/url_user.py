@@ -24,11 +24,9 @@ class UrlUserBase(SQLModel):
     user_id: int = Field(foreign_key="user.id", primary_key=True, index=True)
 
     user_descr: Optional[str] = None
-    metadata_descr: Optional[str] = None
     rating: Optional[Rating] = None
     bookmark: Optional[bool] = None
     share: Optional[bool] = None
-    document_title: Optional[str] = None
     custom_title: Optional[str] = None
 
 
@@ -53,6 +51,7 @@ class UrlUser(UrlUserBase, Timestamp, table=True):
 
 class UrlUserCreateApi(UrlUserBase, extra=Extra.allow):
     url: str
+    url_title: str
     tags: Optional[List[str]] = None
 
 

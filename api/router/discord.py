@@ -22,7 +22,7 @@ router = APIRouter()
 
 
 @router.get("/discord")
-async def login():
+async def go_to_discord_authentication_page():
     url = discord_oauth.get_authorization_url()
     return {"url": url}
 
