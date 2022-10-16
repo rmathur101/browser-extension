@@ -6,7 +6,6 @@ from api.discord_utils import Oauth
 import json
 from pathlib import Path
 
-
 config = dotenv.dotenv_values()
 DATA_DIR = Path(config["DATA_DIR"])
 GUILD_ID_1729 = config["GUILD_ID_1729"]
@@ -30,7 +29,7 @@ async def go_to_discord_authentication_page():
 @router.post("/discord")
 async def update_user_discord_data(discord_user: models.DiscordAddUserData):
     tokens = discord_oauth.get_access_token(code=discord_user.code)
-    discord_user = discord_oauth.get_user(access_token=tokens["access_token"])
+    discord_data = discord_oauth.get_user(access_token=tokens["access_token"])
     guilds = discord_oauth.get_guilds(access_token=tokens["access_token"])
 
     # Check if user is in 1729 guild
@@ -39,16 +38,16 @@ async def update_user_discord_data(discord_user: models.DiscordAddUserData):
 
     user = models.User(
         id=discord_user.user_id,
-        discord_id=discord_user["id"],
-        discord_username=discord_user["username"],
-        discord_avatar=discord_user["avatar"],
+        discord_id=discord_data["id"],
+        discord_username=discord_data["username"],
+        discord_avatar=discord_data["avatar"],
     )
     user = crud.user.update(user)
 
     # Check if user has shared any urls in discord. If so update user_id
     # for these urls and delete temp user created for discord links
     user_discord_only = crud.user.where(
-        dict(discord_id=discord_user["id"], email="discord_only")
+        dict(discord_id=discord_user.user_id, email="discord_only")
     )
     if user_discord_only:
         user_discord_only = user_discord_only[0]
@@ -57,10 +56,10 @@ async def update_user_discord_data(discord_user: models.DiscordAddUserData):
         )
         crud.user.delete(id=user_discord_only.id)
 
-    return {"success": True}
+    return {"detail": "Discord data updated"}
 
 
-@router.get("/discord/{user_id}")
+@router.get("/discord/")
 async def get_user_channels_and_threads():
     with open(DATA_DIR / "metadata" / "server_metadata.json", "r") as f:
         channels = json.load(f)

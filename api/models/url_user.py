@@ -26,7 +26,9 @@ class UrlUserBase(SQLModel):
     user_descr: Optional[str] = None
     rating: Optional[Rating] = None
     bookmark: Optional[bool] = None
-    share: Optional[bool] = None
+    share: Optional[int] = Field(
+        sa_column=Column(BigInteger(), default=None, nullable=True)
+    )
     custom_title: Optional[str] = None
 
 
@@ -38,10 +40,10 @@ class UrlUser(UrlUserBase, Timestamp, table=True):
     )
     discord_reactions: Optional[int] = None
     discord_msg_id: Optional[int] = Field(
-        sa_column=Column(BigInteger(), default=None, autoincrement=False, nullable=True)
+        sa_column=Column(BigInteger(), default=None, nullable=True)
     )
     discord_channel_id: Optional[int] = Field(
-        sa_column=Column(BigInteger(), default=None, autoincrement=False, nullable=True)
+        sa_column=Column(BigInteger(), default=None, nullable=True)
     )
 
     user: Optional["User"] = Relationship(back_populates="urls")

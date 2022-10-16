@@ -103,6 +103,7 @@ class CRUDUrlUser(CRUDBase[UrlUser, Engine]):
                 )
             )
             session.exec(statement)
+        return self.get(user_id=model_obj.user_id, url_id=model_obj.url_id)
 
     def _update_user_for_discord_urls(self, discord_user_id: int, user_id: int) -> None:
         with Session(self.engine) as session, session.begin():

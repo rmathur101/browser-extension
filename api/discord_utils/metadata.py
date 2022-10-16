@@ -26,9 +26,9 @@ async def dump_metadata_threads():
 
     # c.type.value == 0 is a text channel
     channels = [c for c in server.channels if c.type.value == 0]
-    threads = []
     channels_metadata = []
     for channel in channels:
+        threads = []
         for thread in channel.threads:
             threads.append(
                 {
