@@ -59,8 +59,8 @@ async def update_user_discord_data(discord_user: models.DiscordAddUserData):
     return {"detail": "Discord data updated"}
 
 
-@router.get("/discord/")
-async def get_user_channels_and_threads():
+@router.get("/discord/{user_id}")
+async def get_user_channels_and_threads(user_id):
     with open(DATA_DIR / "metadata" / "server_metadata.json", "r") as f:
         channels = json.load(f)
     return channels
