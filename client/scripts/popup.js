@@ -4,7 +4,7 @@
 let newTags = []
 let rating = null
 // temporary hardcoded USER_ID
-const USER_ID = 1
+const USER_ID = 3
 
 async function getActiveTabURL() {
   let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true});
@@ -79,16 +79,16 @@ submitBtn.addEventListener("click", async () => {
 
   displayingLoadingStatus("Saving bookmark...")
   try {
-    const response = await axios.post(CONFIG.API_ENDPOINT + "url", {
-      url: tabURL,
-      bookmark: isBookmarkChecked,
-      share: isShareChecked,
-      user_id: USER_ID, // this should be test user, firecat@email.com
-      tags: newTags,
+    const response = await axios.post(CONFIG.API_ENDPOINT + "urluser", {
+      user_id: USER_ID, // this should be test user, hardcoded for now  
       user_descr: description,
       rating: rating,
-      document_title: canonicalTitle,
-      custom_title: customBookmarkTitle 
+      bookmark: isBookmarkChecked,
+      share: isShareChecked,
+      custom_title: customBookmarkTitle, 
+      url: tabURL,
+      url_title: canonicalTitle,
+      tags: newTags,
     })
 
     console.log(response)
@@ -136,9 +136,15 @@ let displayingLoadingStatus = (customLoadingStatus=null) => {
   document.getElementById('status-cont').innerHTML = `<span>${customLoadingStatus ? customLoadingStatus : "Loading..."}</span>`
 }
 
-let displayStatusClear = (timeout=null) => {
+let awaitTimeout = async(ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+let displayStatusClear = async(timeout=null) => {
   if (timeout != null) {
-    setTimeout(function() { document.getElementById('status-cont').innerHTML = '' }, timeout);
+    // setTimeout(function() { document.getElementById('status-cont').innerHTML = '' }, timeout);
+    await awaitTimeout(timeout)
+    document.getElementById('status-cont').innerHTML = ''
   } else {
     document.getElementById('status-cont').innerHTML = ''
   }
@@ -356,7 +362,7 @@ let getUserUrls = async() => {
   try {
     response = await axios.get(`${CONFIG.API_ENDPOINT}users/${USER_ID}`)
     if (response && response.data && response.data.urls) {
-      displayStatusClear(500)
+      await displayStatusClear(500) //TODO: do i have to make this and others with waiting into async functions and await for it
       return response.data.urls
     } else {
       displayErrorStatus("Failed to refresh bookmarks.")
@@ -394,26 +400,38 @@ let populateUserFeed = async() => {
   console.log("urls from response of getUserUrls():")
   console.log(urls)
 
+  // TODO: remove this, just for testing
+  // urls = [
+  //   {url: {url: 'http://www.google.com'}, created_at: '2021-01-01', document_title: 'Google Website', rating: 3, tags: [{name: 'web3'}, {name: 'crypto'}]},
+  //   {url: {url: 'http://www.yahoo.com'}, created_at: '2020-02-15', document_title: 'Yahoo', rating: 1, tags: [{name: 'sports'}, {name: 'finance'}]},
+  //   {url: {url: 'http://www.ign.com'}, created_at: '2022-01-02', document_title: 'Random IGN Article', rating: 4, tags: [{name: 'gaming'}, {name: 'gta'}]},
+  //   {url: {url: 'http://www.pitchfork.com'}, created_at: '2019-02-01', document_title: 'Music Top 10', rating: null, tags: [{name: 'music'}]}
+  // ]
+
   // create table rows
   if (urls != null) {
     let tableRows = "" 
     for (const url of urls ) {
       // if valid date, set date to month and day if this year, otherwise add year
       let dateStr = '-'
+      let dateNum = '-'
       let momentDate = moment(url.created_at)
       if (momentDate.isValid() == true) {
         if (momentDate.format('YYYY') == moment().format('YYYY')) {
           dateStr = moment(url.created_at).format('MMM D')
+          dateNum = moment(url.created_at).valueOf()
         } else {
           dateStr = moment(url.created_at).format('MMM D, YY')
+          dateNum = moment(url.created_at).valueOf()
         }
       }
       tableRows = tableRows + `
       <tr>
-        <td class="bookmark-title"><a class="bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.document_title}</a></td>
+        <td><a class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
         <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
         <td class="bookmark-date">${dateStr}</td>
+        <td class="bookmark-date-hidden" style="display: none;">${dateNum}</td>
       </tr>
       ` 
     }
@@ -422,7 +440,7 @@ let populateUserFeed = async() => {
     document.getElementById("saved-bookmarks-table-body").innerHTML = tableRows
 
     let options = {
-      valueNames: [ 'bookmark-title', 'bookmark-tags' ]
+      valueNames: [ 'bookmark-title', 'bookmark-rating', 'bookmark-date-hidden']
     };
     let savedBookmarksTable = new List('saved-bookmarks-table-cont', options);
 
@@ -443,6 +461,20 @@ let openBookmarkOnClick = (e) => {
   chrome.tabs.create({url: e.target.href, active: false})
   // setTimeout(function() { displayStatusClear() }, 2000);
   displayStatusClear(2000)
+}
+
+let sortIconElems = document.getElementsByClassName('sort-icon')
+for (const elem of sortIconElems) {
+  elem.addEventListener('click', (e) => {
+	  e.target.style.transform = "rotate(0deg)"
+    e.target.style.color = 'red'
+
+    if (e.target.innerText == "arrow_drop_down") {
+      e.target.innerText = "arrow_drop_up"
+    } else {
+      e.target.innerText = "arrow_drop_down"
+    }
+  })
 }
 
 populateUserFeed()

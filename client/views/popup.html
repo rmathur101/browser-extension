@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="../styles/popup.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" /> -->
   </head>
   <body id="popup-container">
     <div id="tabs-cont">
@@ -72,10 +73,19 @@
         <input type="search" class="search" placeholder="normal search">
         <table id="saved-bookmarks-table">
           <thead>
-            <th>Name <button class="sort" data-sort="bookmark-title">Sort</button></th>
+            <th>
+              <span style="vertical-align: middle;">Name</span>
+              <span data-insensitive="true" data-sort="bookmark-title" class="sort-icon sort material-symbols-outlined">arrow_drop_up</span>
+            </th>
             <th>Tags</th>
-            <th>Rating</th>
-            <th>Bookmark Date</th>
+            <th>
+              <span style="vertical-align: middle;">Rating</span>
+              <span data-sort="bookmark-rating" class="sort-icon sort material-symbols-outlined">arrow_drop_up</span>
+            </th>
+            <th>
+              <span style="vertical-align: middle;">Date</span>
+              <span data-sort="bookmark-date-hidden" class="sort-icon sort material-symbols-outlined">arrow_drop_up</span>
+            </th>
           </thead>
           <tbody class="list" id="saved-bookmarks-table-body"></tbody>
         </table>

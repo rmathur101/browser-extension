@@ -129,5 +129,12 @@ body, input, textarea {
 	color: green;
 }
 
+.sort-icon {
+	transform: rotate(90deg);
+	font-size: 20px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
 
 
