@@ -455,18 +455,26 @@ let populateUserFeed = async() => {
   }
 }
 
-let openBookmarkOnClick = (e) => {
+let openBookmarkOnClick = async(e) => {
   displayOpeningBookmarkInNewTabStatus() 
   e.preventDefault()
   chrome.tabs.create({url: e.target.href, active: false})
   // setTimeout(function() { displayStatusClear() }, 2000);
-  displayStatusClear(2000)
+  await displayStatusClear(2000)
 }
 
 let sortIconElems = document.getElementsByClassName('sort-icon')
+let toggledSortIconElem = null 
 for (const elem of sortIconElems) {
   elem.addEventListener('click', (e) => {
-	  e.target.style.transform = "rotate(0deg)"
+
+    if (toggledSortIconElem && toggledSortIconElem != e.target) {
+      toggledSortIconElem.innerText = "arrow_drop_up"
+      toggledSortIconElem.style.color = 'black'
+    }
+
+    toggledSortIconElem = e.target
+
     e.target.style.color = 'red'
 
     if (e.target.innerText == "arrow_drop_down") {
