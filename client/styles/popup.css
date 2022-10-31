@@ -232,13 +232,14 @@ button:focus {
 
 #bookmark-title-input:focus, #bookmark-description-value:focus {
 	border: 2px solid #716397;
-	box-shadow: 0px 0px 2px 2px gray;
+	box-shadow: 0px 0px 2px 2px #716397;
 	opacity: 1;
 	/* border: 1px solid #003167; substructure website colors */
 }
 
 #bookmark-title-input:hover, #bookmark-description-value:hover {
-	box-shadow: 0px 0px 2px 2px gray;
+	box-shadow: 0px 0px 2px 2px #716397;
+	/* border: 3px solid #716397; */
 	opacity: 1;
 }
 
