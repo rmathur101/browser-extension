@@ -329,7 +329,7 @@ function showCreateBookmarkTab() {
   toggleCreateBookmarkTab(true)
 
   let e = document.getElementById('popup-container')
-  e.style.height = '250px'
+  e.style.height = '280px'
 }
 
 function showViewFeedTab() {
