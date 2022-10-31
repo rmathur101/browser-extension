@@ -88,15 +88,15 @@ body, input, textarea {
 
 #submit-btn {
 	border-radius: 3px;
-	border: 1px solid gray;
+	border: 2px solid #716397;
 	font-family: 'Montserrat';
 	font-size: 20px;
 	background-color: white;
-	color: gray;
+	color: #716397;
 }
 
 #submit-btn:hover {
-	/* box-shadow: 0px 0px 1px 1px #716397; */
+	box-shadow: 0px 0px 1px 1px #716397;
 	background-color: #716397;
 	border: 1px solid #716397;
 	color: white;
