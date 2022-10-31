@@ -13,9 +13,8 @@
 	animation: gradient 15s ease infinite;
 
   width: 700px;
-  height: 250px;
+  height: 280px;
 	margin: 0px;
-	height: 100%;
 	padding: 10px 10px 10px 10px;
 
 	background-color: white;
@@ -62,8 +61,10 @@ body, input, textarea {
 }
 
 #add-tag-btn {
-	font-size: 20px;
-	color: green;
+	font-size: 13px !important;
+	padding: 0px 0px 0px 0px;
+	height: 20px;
+	width: 20px;
 }
 
 /* #bookmark-checkbox-input, #share-checkbox-input {
@@ -86,8 +87,8 @@ body, input, textarea {
 	cursor: pointer;
 }
 
-#submit-btn {
-	border-radius: 3px;
+#submit-btn, #add-tag-btn {
+	border-radius: 2px;
 	border: 2px solid #716397;
 	font-family: 'Montserrat';
 	font-size: 20px;
@@ -95,10 +96,8 @@ body, input, textarea {
 	color: #716397;
 }
 
-#submit-btn:hover {
-	box-shadow: 0px 0px 1px 1px #716397;
+#submit-btn:hover, #add-tag-btn:hover {
 	background-color: #716397;
-	border: 1px solid #716397;
 	color: white;
 }
 
@@ -146,7 +145,7 @@ body, input, textarea {
 
 .unselected-tab {
 	color: #716397;
-	opacity: 50%;
+	opacity: 75%;
 }
 
 .unselected-tab:hover {
@@ -221,29 +220,26 @@ button:focus {
 	outline: none;
 }
 
-#bookmark-title-input {
-	border: 1px solid #716397;
+#bookmark-title-input, #bookmark-description-value {
+	border: 2px solid #716397;
 	padding: 4px 4px 4px 4px;
 	border-radius: 3px;
+	opacity: 1;
+	margin-bottom: 10px;
 	color:#716397;
-	opacity: 0.5;
+	/* color: black; this is still an open question... */
 }
 
-#bookmark-title-input:focus {
-	/* border: 1px solid #716397; */
-	box-shadow: 0px 0px 1px 1px #716397;
+#bookmark-title-input:focus, #bookmark-description-value:focus {
+	border: 2px solid #716397;
+	box-shadow: 0px 0px 2px 2px gray;
 	opacity: 1;
-	/* border: 1px solid #003167; substructure website colors
-	box-shadow: 0px 0px 1px 1px #003167; */
+	/* border: 1px solid #003167; substructure website colors */
 }
 
-#bookmark-title-input:hover {
-	box-shadow: 0px 0px 1px 1px #716397;
+#bookmark-title-input:hover, #bookmark-description-value:hover {
+	box-shadow: 0px 0px 2px 2px gray;
 	opacity: 1;
-	/* border: 2px solid #716397; */ 
-	/* box-shadow: 0px 0px 1px 1px #716397; */
-	/* border: 1px solid #003167; substructure website colors
-	box-shadow: 0px 0px 1px 1px #003167; */
 }
 
 /* this is the placeholder in a search input */
