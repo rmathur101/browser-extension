@@ -282,8 +282,10 @@ function toggleCreateBookmarkTab(on=true) {
   if (on) {
     tabContElem.style.display = ""
     tabElem.classList.add("selected-tab")
+    tabElem.classList.remove("unselected-tab")
   } else {
     tabContElem.style.display = "none"
+    tabElem.classList.add("unselected-tab")
     tabElem.classList.remove("selected-tab")
   }
 }
@@ -295,8 +297,10 @@ function toggleViewFeedTab(on=true) {
   if (on) {
     tabContElem.style.display = ""
     tabElem.classList.add("selected-tab")
+    tabElem.classList.remove("unselected-tab")
   } else {
     tabContElem.style.display = "none"
+    tabElem.classList.add("unselected-tab")
     tabElem.classList.remove("selected-tab")
   }
 }
@@ -308,8 +312,10 @@ function toggleViewBookmarksTab(on=true) {
   if (on) {
     tabContElem.style.display = ""
     tabElem.classList.add('selected-tab') 
+    tabElem.classList.remove("unselected-tab")
   } else {
     tabContElem.style.display = "none"
+    tabElem.classList.add("unselected-tab")
     tabElem.classList.remove('selected-tab') 
   }
 }
@@ -321,6 +327,9 @@ function showCreateBookmarkTab() {
   toggleViewBookmarksTab(false)
   toggleViewFeedTab(false)
   toggleCreateBookmarkTab(true)
+
+  let e = document.getElementById('popup-container')
+  e.style.height = '250px'
 }
 
 function showViewFeedTab() {
@@ -329,6 +338,9 @@ function showViewFeedTab() {
   toggleViewBookmarksTab(false)
   toggleCreateBookmarkTab(false)
   toggleViewFeedTab(true)
+
+  let e = document.getElementById('popup-container')
+  e.style.height = '500px'
 }
 
 function showViewBooksmarksTab() {
@@ -337,6 +349,9 @@ function showViewBooksmarksTab() {
   toggleCreateBookmarkTab(false)
   toggleViewFeedTab(false)
   toggleViewBookmarksTab(true)
+
+  let e = document.getElementById('popup-container')
+  e.style.height = '500px'
 }
 
 let bookmarkTabElem = document.getElementById("create-bookmark-tab")
@@ -396,6 +411,15 @@ let populateUserFeed = async() => {
     return url.url.url
   }
 
+  let getShortTitle = (url) => {
+    let title = url.custom_title || url.url.title
+    if (title.length > 30) {
+      title = title.substring(0, 50)
+      title = title + '...'
+    }
+    return title
+  }
+
   let urls = await getUserUrls()
   console.log("urls from response of getUserUrls():")
   console.log(urls)
@@ -427,7 +451,8 @@ let populateUserFeed = async() => {
       }
       tableRows = tableRows + `
       <tr>
-        <td><a class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
+        <td><a class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${getShortTitle(url)}</a></td>
+        <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
         <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
         <td class="bookmark-date">${dateStr}</td>
