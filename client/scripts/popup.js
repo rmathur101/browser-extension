@@ -199,17 +199,26 @@ let removeTagBtnClick = async(e) => {
   }
 }
 
+let removeTagBtnMouseOver = async(e) => { 
+  e.target.parentElement.classList.add("remove-tag-hover")
+}
+let removeTagBtnMouseOut = async(e) => {
+  e.target.parentElement.classList.remove("remove-tag-hover")
+}
+
 function renderDisplayNewTags() {
   let elem = document.getElementById("new-tags-display-cont")
   elem.innerHTML = ""
   for (const tag of newTags) {
-    let span = `<span><span class="tag-name" style="vertical-align: middle;">${tag}</span><span class="material-symbols-outlined remove-tag-btn" style="font-size: 11px; vertical-align: middle; color: red;">close</span></span>`
+    let span = `<span class="new-tag"><span class="tag-name" ">${tag}</span><span class="material-symbols-outlined remove-tag-btn">close</span></span>`
     elem.insertAdjacentHTML('beforeend', span) 
   }
 
   let removeTagBtns = document.querySelectorAll('.remove-tag-btn')
   for (const elem of removeTagBtns) {
     elem.removeEventListener("click", removeTagBtnClick)
+    elem.addEventListener("mouseover", removeTagBtnMouseOver)
+    elem.addEventListener("mouseout", removeTagBtnMouseOut)
     elem.addEventListener("click", removeTagBtnClick)
   }
 }
@@ -329,7 +338,10 @@ function showCreateBookmarkTab() {
   toggleCreateBookmarkTab(true)
 
   let e = document.getElementById('popup-container')
+  // we revert to the default height of the popup, but we set the minHeight so it can grow if needed, and then remove the explicit height
   e.style.height = '280px'
+  e.style.minHeight = '280px'
+  e.style.height = ''
 }
 
 function showViewFeedTab() {
@@ -340,7 +352,7 @@ function showViewFeedTab() {
   toggleViewFeedTab(true)
 
   let e = document.getElementById('popup-container')
-  e.style.height = '500px'
+  e.style.minHeight = '500px'
 }
 
 function showViewBooksmarksTab() {
