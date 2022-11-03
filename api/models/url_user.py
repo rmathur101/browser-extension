@@ -24,11 +24,11 @@ class UrlUserBase(SQLModel):
     user_id: int = Field(foreign_key="user.id", primary_key=True, index=True)
 
     user_descr: Optional[str] = None
-    metadata_descr: Optional[str] = None
     rating: Optional[Rating] = None
     bookmark: Optional[bool] = None
-    share: Optional[bool] = None
-    document_title: Optional[str] = None
+    share: Optional[int] = Field(
+        sa_column=Column(BigInteger(), default=None, nullable=True)
+    )
     custom_title: Optional[str] = None
 
 
@@ -40,10 +40,10 @@ class UrlUser(UrlUserBase, Timestamp, table=True):
     )
     discord_reactions: Optional[int] = None
     discord_msg_id: Optional[int] = Field(
-        sa_column=Column(BigInteger(), default=None, autoincrement=False, nullable=True)
+        sa_column=Column(BigInteger(), default=None, nullable=True)
     )
     discord_channel_id: Optional[int] = Field(
-        sa_column=Column(BigInteger(), default=None, autoincrement=False, nullable=True)
+        sa_column=Column(BigInteger(), default=None, nullable=True)
     )
 
     user: Optional["User"] = Relationship(back_populates="urls")
@@ -53,6 +53,7 @@ class UrlUser(UrlUserBase, Timestamp, table=True):
 
 class UrlUserCreateApi(UrlUserBase, extra=Extra.allow):
     url: str
+    url_title: str
     tags: Optional[List[str]] = None
 
 

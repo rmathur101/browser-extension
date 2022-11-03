@@ -9,6 +9,9 @@ import subprocess
 from dotenv import dotenv_values
 import json
 from api import crud, models, utils
+import schedule
+from time import sleep
+
 
 config = dotenv_values()
 DATA_DIR = Path(config["DATA_DIR"])
@@ -118,5 +121,7 @@ def upsert_url(user, channel, msg, msg_urls):
 
 
 if __name__ == "__main__":
-    # discord2db()
-    json2db()
+    schedule.every().day.at("02:00").do(discord2db)
+    while True:
+        schedule.run_pending()
+        sleep(60 * 60 * 24)  # check once every day

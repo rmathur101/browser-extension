@@ -1,2 +1,2 @@
 from .oauth import Oauth
-from .webhook import send_message
+from .webhook import discord_send_message

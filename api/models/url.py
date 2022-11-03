@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 class UrlBase(SQLModel):
     url: AnyHttpUrl
+    title: str
 
 
 class Url(UrlBase, table=True):
@@ -18,9 +19,10 @@ class Url(UrlBase, table=True):
             BigInteger(), primary_key=True, autoincrement=False, index=True
         )
     )
-    url_users: List["UrlUser"] = Relationship(back_populates="url")
-    url_title: Optional[str] = None
+    description: Optional[str] = None
     embedded: Optional[bool] = False
+
+    url_users: List["UrlUser"] = Relationship(back_populates="url")
 
 
 class UrlCreate(UrlBase):
