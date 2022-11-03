@@ -13,7 +13,7 @@
 	animation: gradient 15s ease infinite;
 
   width: 700px;
-  height: 280px;
+  min-height: 280px;
 	margin: 0px;
 	padding: 10px 10px 10px 10px;
 
@@ -103,12 +103,6 @@ body, input, textarea {
 
 #new-tag-cont {
 	display: none
-}
-
-#new-tags-display-cont > span {
-	border: 1px solid black;
-	margin-right: 5px;
-	cursor: pointer;
 }
 
 #bookmark-submit-rating-stars-cont {
@@ -227,6 +221,7 @@ button:focus {
 	opacity: 1;
 	margin-bottom: 10px;
 	color:#716397;
+	font-size: 15px;
 	/* color: black; this is still an open question... */
 }
 
@@ -247,4 +242,38 @@ button:focus {
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #716397;
   opacity: 0.5; /* Firefox */
+}
+
+.tag-name {
+	color: #716397;
+	vertical-align: middle;
+}
+
+.remove-tag-btn {
+ 	font-size: 11px !important; 
+	vertical-align: middle; 
+	color: #716397;
+	cursor: pointer;
+	display: none;
+}
+
+.remove-tag-btn:hover {
+	color: #f44336;
+}
+
+.new-tag {
+	border: 1px solid #716397;
+	background-color: #f1f0f5;
+	color: #716397;
+	margin-right: 5px;
+	border-radius: 3px;
+	padding: 1px 3px 1px 3px;
+	opacity: 1;
+	font-size: 11px;
+}
+
+.remove-tag-hover {
+	border: 1px solid #f44336 !important;
+	box-shadow: 0px 0px 2px 2px #f44336 !important;
+	opacity: 1;
 }
