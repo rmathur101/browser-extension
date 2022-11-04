@@ -234,7 +234,6 @@ button:focus {
 
 #bookmark-title-input:hover, #bookmark-description-value:hover {
 	box-shadow: 0px 0px 2px 2px #716397;
-	/* border: 3px solid #716397; */
 	opacity: 1;
 }
 
