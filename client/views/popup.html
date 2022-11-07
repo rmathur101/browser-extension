@@ -83,11 +83,13 @@
             </th>
             <th class="noselect">
               <span style="vertical-align: middle;">Date</span>
-              <span data-sort="bookmark-date-hidden" class="sort-icon sort material-symbols-outlined">swap_vert</span>
+              <span id="default-toggled-sort-icon" data-sort="bookmark-date-hidden" class="sort-icon sort material-symbols-outlined">north</span>
             </th>
+            <!-- <th></th> --> <!-- For displaying the timestamp -->
           </thead>
           <tbody class="list" id="saved-bookmarks-table-body"></tbody>
         </table>
+        <ul id="saved-bookmarks-table-pag" class="pagination"></ul>
       </div>
     </div>
     <div id="view-feed-cont" style="display: none">

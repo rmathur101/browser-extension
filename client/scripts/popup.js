@@ -468,7 +468,7 @@ let populateUserFeed = async() => {
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
         <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
         <td class="bookmark-date">${dateStr}</td>
-        <td class="bookmark-date-hidden" style="display: none;">${dateNum}</td>
+        <td class="bookmark-date-hidden" style="display: none">${dateNum}</td>
       </tr>
       ` 
     }
@@ -477,9 +477,12 @@ let populateUserFeed = async() => {
     document.getElementById("saved-bookmarks-table-body").innerHTML = tableRows
 
     let options = {
-      valueNames: [ 'bookmark-title', 'bookmark-rating', 'bookmark-date-hidden']
+      valueNames: [ 'bookmark-title', 'bookmark-rating', 'bookmark-date-hidden'],
+      page: 6,
+      pagination: true
     };
     let savedBookmarksTable = new List('saved-bookmarks-table-cont', options);
+    savedBookmarksTable.sort('bookmark-date-hidden', { order: "desc" });
 
     // add click listeners to all the links
     let bookmarkURLLinks = document.getElementsByClassName('bookmark-URL-link')
@@ -501,7 +504,7 @@ let openBookmarkOnClick = async(e) => {
 }
 
 let sortIconElems = document.getElementsByClassName('sort-icon')
-let toggledSortIconElem = null 
+let toggledSortIconElem = document.getElementById('default-toggled-sort-icon') 
 for (const elem of sortIconElems) {
   elem.addEventListener('click', (e) => {
 
