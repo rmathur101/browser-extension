@@ -170,11 +170,15 @@ body, input, textarea {
 }
 
 .sort-icon {
-	/* transform: rotate(90deg); */
-	font-size: 30px !important;
+	font-size: 16px !important;
 	vertical-align: middle;
 	cursor: pointer;
-	color: #f1f0f5;
+	color: #716397;
+}
+
+.sort-icon:hover {
+	color: #716397;
+	text-decoration: underline;
 }
 
 

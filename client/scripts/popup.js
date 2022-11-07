@@ -506,18 +506,15 @@ for (const elem of sortIconElems) {
   elem.addEventListener('click', (e) => {
 
     if (toggledSortIconElem && toggledSortIconElem != e.target) {
-      toggledSortIconElem.innerText = "arrow_drop_up"
-      toggledSortIconElem.style.color = 'black'
+      toggledSortIconElem.innerText = "swap_vert"
     }
 
     toggledSortIconElem = e.target
 
-    e.target.style.color = 'red'
-
-    if (e.target.innerText == "arrow_drop_down") {
-      e.target.innerText = "arrow_drop_up"
+    if (e.target.innerText == "south") {
+      e.target.innerText = "north"
     } else {
-      e.target.innerText = "arrow_drop_down"
+      e.target.innerText = "south"
     }
   })
 }
