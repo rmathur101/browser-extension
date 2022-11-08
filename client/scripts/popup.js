@@ -363,7 +363,7 @@ function showViewBooksmarksTab() {
   toggleViewBookmarksTab(true)
 
   let e = document.getElementById('popup-container')
-  e.style.height = '500px'
+  e.style.minHeight = '500px'
 }
 
 let bookmarkTabElem = document.getElementById("create-bookmark-tab")
@@ -425,10 +425,18 @@ let populateUserFeed = async() => {
 
   let getShortTitle = (url) => {
     let title = url.custom_title || url.url.title
-    if (title.length > 30) {
-      title = title.substring(0, 50)
+    return title
+
+    // for now we are not shortening the title
+    if (title.length > 40) {
+      title = title.substring(0, 36)
       title = title + '...'
     }
+    return title
+  }
+
+  let getFullTitle = (url) => {
+    let title = url.custom_title || url.url.title
     return title
   }
 
@@ -461,9 +469,13 @@ let populateUserFeed = async() => {
           dateNum = moment(url.created_at).valueOf()
         }
       }
+
+      let fullTitle = getFullTitle(url)
+      let shortTitle = getShortTitle(url)
+
       tableRows = tableRows + `
       <tr>
-        <td><a class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${getShortTitle(url)}</a></td>
+        <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a></td>
         <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
         <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
@@ -487,8 +499,16 @@ let populateUserFeed = async() => {
     // add click listeners to all the links
     let bookmarkURLLinks = document.getElementsByClassName('bookmark-URL-link')
     for (const bookmarkURLLink of bookmarkURLLinks) {
-     bookmarkURLLink.addEventListener('click', openBookmarkOnClick) 
+      bookmarkURLLink.addEventListener('click', openBookmarkOnClick)
     } 
+    
+    // NOTE: for now we are not displaying the tooltip to expand the title
+    // let bookmarkTitleDataCells = document.getElementsByClassName('bookmark-title-data-cell')
+    // for (const bookmarkTitleDataCell of bookmarkTitleDataCells) {
+    //   bookmarkTitleDataCell.addEventListener('mouseover', displayTitleTooltip)
+    //   bookmarkTitleDataCell.addEventListener('mouseout', hideTitleTooltip)
+    // }
+
   } else {
     console.log("Not able to retrieve urls from API!")
     alert("Not able to retrieve urls from API!")
@@ -502,6 +522,26 @@ let openBookmarkOnClick = async(e) => {
   // setTimeout(function() { displayStatusClear() }, 2000);
   await displayStatusClear(2000)
 }
+
+// NOTE: for now we are not displaying the tooltip to expand the title
+// let displayTitleTooltip = (e) => {
+//   let target = e.target
+//   if (target.tagName != 'A') {
+//     target = target.parentElement
+//     let link = e.target.children[0]
+//     let fullTitle = link.dataset.fullTitle
+//     link.innerText = fullTitle
+//   } else {
+//     let fullTitle = target.dataset.fullTitle
+//     target.innerText = fullTitle
+//   }
+// }
+
+// let hideTitleTooltip = (e) => {
+//   let link = e.target.children[0]
+//   let shortTitle = link.dataset.shortTitle
+//   link.innerText = shortTitle
+//  }
 
 let sortIconElems = document.getElementsByClassName('sort-icon')
 let toggledSortIconElem = document.getElementById('default-toggled-sort-icon') 
