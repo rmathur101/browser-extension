@@ -563,3 +563,17 @@ for (const elem of sortIconElems) {
 }
 
 populateUserFeed()
+
+document.getElementById('bookmark-title-input').focus()
+document.getElementById('bookmark-title-input').addEventListener('focus', (e) => {
+  e.target.select()
+})
+
+// tab switches focus to checkbox
+document.getElementById('bookmark-title-input').addEventListener('keydown', (e) => {
+  if (e.key == 'Tab') {
+    e.preventDefault()
+    // focus on bookmark checkbox input
+    document.getElementById('bookmark-description-value').focus()
+  }
+})
