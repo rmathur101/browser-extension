@@ -19,18 +19,26 @@
         <input style="width: 400px; margin-left: 5px;" id="bookmark-title-input">
       </span>
       <br>
+      <span id="bookmark-descrip-cont">
+        <span style="font-size: 15px">DESCRIPTION</span>
+        <br>
+        <textarea id="bookmark-description-value"></textarea>
+      </span>
+      <br>
       <span id="bookmark-input-cont">
-        <input id="bookmark-checkbox-input" type="checkbox" name="bookmark-checkbox" checked>
+        <span>
+          <input tabindex="0" id="bookmark-checkbox-input" type="checkbox" name="bookmark-checkbox" checked>
+        </span>
         <label class="bookmark-submit-label" id="bookmark-checkbox-label" for="bookmark-checkbox">BOOKMARK</label>
         <!-- <span id="bookmark-checkbox-info-icon" class="material-symbols-outlined">help</span> -->
       </span>
-      <br>
-      <span id="share-input-cont">
+      <!-- <br> -->
+      <span id="share-input-cont" style="margin-left: 20px;">
         <input id="share-checkbox-input" type="checkbox" name="share-checkbox">
-        <label class="bookmark-submit-label" id="share-checkbox-label" for="share-checkbox">SHARE</label>
+        <label class="bookmark-submit-label" id="share-checkbox-label" for="share-checkbox">BROADCAST</label>
         <!-- <span id="share-checkbox-info-icon" class="material-symbols-outlined">help</span> -->
       </span>
-      <br>
+      <br/><br/>
       <span id="add-tag-input-cont">
         <span id="add-tag-input-label" style="font-size: 15px">TAGS </span>
         <button id="add-tag-btn">+</button>
@@ -43,14 +51,8 @@
         <button id="new-tag-done-btn">Done</button>
         <button id="new-tag-cancel-btn">Cancel</button>
       </span>
-      <br/>
-      <span id="bookmark-descrip-cont">
-        <span style="font-size: 15px">DESCRIPTION</span>
-        <br>
-        <textarea id="bookmark-description-value"></textarea>
-      </span>
-      <br>
-      <span id="bookmark-submit-rating-stars-cont">
+      <!-- <br> -->
+      <!-- <span id="bookmark-submit-rating-stars-cont">
         <span style="font-size: 15px; vertical-align: middle;">RATING </span>
         <span data-submit-rating-star="1" class="material-symbols-outlined bookmark-submit-rating-star">star_rate</span>
         <span data-submit-rating-star="2" class="material-symbols-outlined bookmark-submit-rating-star">star_rate</span>
@@ -58,14 +60,15 @@
         <span data-submit-rating-star="4" class="material-symbols-outlined bookmark-submit-rating-star">star_rate</span>
         <span data-submit-rating-star="5" class="material-symbols-outlined bookmark-submit-rating-star">star_rate</span>
         <span id="bookmark-submit-rating">(None)</span>
-      </span>
+      </span> -->
       <br><br>
       <span>
         <button id="submit-btn">SAVE</button>
       </span>
-      <span>
+      <!-- NOTE HERE IS THE LOGIN STUFF -->
+      <!-- <span>
         <button id="login-page-btn">Login</button>
-      </span>
+      </span> -->
     </div>
     <div id="view-bookmarks-cont" style="display: none;">
       <div id="saved-bookmarks-table-cont">
