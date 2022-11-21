@@ -271,11 +271,12 @@ for (const star of bookmarkSubmitRatingStars) {
   })
 } 
 
-let bookmarkSubmitRatingStarsCont = document.getElementById("bookmark-submit-rating-stars-cont")
-bookmarkSubmitRatingStarsCont.addEventListener("mouseout", async(e) => {
-  clearSubmitBookmarkRatingStars()
-  fillSubmitBookmarkRatingStarsBasedOnRating()
-})
+// ignore rating stars for now
+// let bookmarkSubmitRatingStarsCont = document.getElementById("bookmark-submit-rating-stars-cont")
+// bookmarkSubmitRatingStarsCont.addEventListener("mouseout", async(e) => {
+//   clearSubmitBookmarkRatingStars()
+//   fillSubmitBookmarkRatingStarsBasedOnRating()
+// })
 
 // get title after extension loads and set it to input
 document.addEventListener("DOMContentLoaded", async(e) => {
@@ -378,10 +379,14 @@ document.getElementById("view-bookmarks-tab").addEventListener("click", async() 
   showViewBooksmarksTab()
 })
 
+// only show btn if element is on dom 
 let loginPageBtn = document.getElementById("login-page-btn")
-loginPageBtn.addEventListener("click", async() => {
-  chrome.tabs.create({url: 'views/login.html'}) 
-})
+if (loginPageBtn) {
+  loginPageBtn.addEventListener("click", async() => {
+    chrome.tabs.create({url: 'views/login.html'}) 
+  })
+}
+
 
 let getUserUrls = async() => {
   let response = null
@@ -575,5 +580,22 @@ document.getElementById('bookmark-title-input').addEventListener('keydown', (e) 
     e.preventDefault()
     // focus on bookmark checkbox input
     document.getElementById('bookmark-description-value').focus()
+    // document.getElementById('bookmark-checkbox-input').focus()
+  }
+})
+
+document.getElementById('bookmark-checkbox-input').addEventListener('focus', (e) => {
+  e.target.classList.add('checkbox-input-focus')
+})
+
+document.getElementById('bookmark-checkbox-input').addEventListener('focusout', (e) => {
+  e.target.classList.remove('checkbox-input-focus')
+})
+
+// on keydown of bookmark checkbox input, if enter toggle checkbox
+document.getElementById('bookmark-checkbox-input').addEventListener('keydown', (e) => {
+  if (e.key == 'Enter') {
+    e.preventDefault()
+    e.target.checked = !e.target.checked
   }
 })
