@@ -228,6 +228,10 @@ span:focus {
 	outline: none;
 }
 
+#bookmark-title-input, #bookmark-description-value {
+	width: 95%;
+}
+
 #bookmark-title-input, #bookmark-description-value, #saved-bookmarks-search, #new-tag-input {
 	border: 1px solid #716397;
 	padding: 4px 4px 4px 4px;
@@ -341,3 +345,15 @@ span:focus {
 	float: right;
 	color: #716397;
 } */
+
+.saved-bookmark-trash-icon {
+	font-size:20px !important;
+	float: right;
+	color: #716397;
+	cursor: pointer;
+	display: none !important;
+}
+
+.saved-bookmark-trash-icon:hover {
+	color: #f44336;
+}
