@@ -449,6 +449,11 @@ let populateUserFeed = async() => {
     return title
   }
 
+  let getURLID = (url) => {
+    console.log(url)
+    return url.url_id + ""
+  }
+
   let urls = await getUserUrls()
   console.log("urls from response of getUserUrls():")
   console.log(urls)
@@ -465,6 +470,11 @@ let populateUserFeed = async() => {
   if (urls != null) {
     let tableRows = "" 
     for (const url of urls ) {
+      // ignore bookmarks that have been deleted
+      if (!url.bookmark) {
+        continue
+      }
+
       // if valid date, set date to month and day if this year, otherwise add year
       let dateStr = '-'
       let dateNum = '-'
@@ -484,7 +494,7 @@ let populateUserFeed = async() => {
 
       tableRows = tableRows + `
       <tr class="saved-bookmark-row">
-        <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a><span class="material-symbols-outlined saved-bookmark-trash-icon">delete_forever</span></td>
+        <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a><span class="material-symbols-outlined saved-bookmark-trash-icon" data-urlid="${getURLID(url)}">delete_forever</span></td>
         <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
         <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
@@ -515,12 +525,20 @@ let populateUserFeed = async() => {
       bookmarkURLLink.addEventListener('click', openBookmarkOnClick)
     } 
     
-    // NOTE: for now we are not displaying the tooltip to expand the title
+    // add listeners to expand and collapse the title
     let bookmarkTitleDataCells = document.getElementsByClassName('bookmark-title-data-cell')
     for (const bookmarkTitleDataCell of bookmarkTitleDataCells) {
       bookmarkTitleDataCell.addEventListener('mouseover', displayTitleTooltip)
       bookmarkTitleDataCell.addEventListener('mouseout', hideTitleTooltip)
     }
+
+    // add listeners to delete the bookmark
+    let savedBookmarkTrashIcons = document.getElementsByClassName('saved-bookmark-trash-icon')
+    for (const savedBookmarkTrashIcon of savedBookmarkTrashIcons) {
+      savedBookmarkTrashIcon.addEventListener('click', deleteBookmarkOnClick)
+    }
+
+    // for now we're not doing this, but this is for hiding / appearing on table row hover
     // let savedBookmarkRows = document.getElementsByClassName('saved-bookmark-row')
     // for (const SBR of savedBookmarkRows) {
     //   SBR.addEventListener('mouseover', displayTitleTooltip)
@@ -559,6 +577,18 @@ let hideTitleTooltip = (e) => {
   let trashElem = e.currentTarget.children[1]
   trashElem.style.setProperty("display", "none", "important")
  }
+
+let deleteBookmarkOnClick = async(e) => {
+  let savedBookmarkTrashIcon = e.currentTarget
+  let urlid = savedBookmarkTrashIcon.dataset.urlid 
+
+  // make post request to /urluser to delete the url using axios
+  let response = await axios.post(CONFIG.API_ENDPOINT + "urluser/" + urlid, {
+    user_id: USER_ID,
+    bookmark: false
+  })
+}
+
 
 let sortIconElems = document.getElementsByClassName('sort-icon')
 let toggledSortIconElem = document.getElementById('default-toggled-sort-icon') 
