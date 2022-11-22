@@ -484,7 +484,7 @@ let populateUserFeed = async() => {
 
       tableRows = tableRows + `
       <tr class="saved-bookmark-row">
-        <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a></td>
+        <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a><span class="material-symbols-outlined saved-bookmark-trash-icon">delete_forever</span></td>
         <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
         <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
@@ -494,7 +494,7 @@ let populateUserFeed = async() => {
       ` 
     }
 
-    // what we'll use for the edit icon
+    // what we'll use for the edit icon (later)
     {/* <span class="material-symbols-outlined bookmark-name-edit-icon">edit</span> */}
 
     // insert table rows
@@ -541,24 +541,23 @@ let openBookmarkOnClick = async(e) => {
   await displayStatusClear(2000)
 }
 
-// NOTE: for now we are not displaying the tooltip to expand the title
 let displayTitleTooltip = (e) => {
-  let target = e.target
-  if (target.tagName != 'A') {
-    target = target.parentElement
-    let link = e.target.children[0]
-    let fullTitle = link.dataset.fullTitle
-    link.innerText = fullTitle
-  } else {
-    let fullTitle = target.dataset.fullTitle
-    target.innerText = fullTitle
-  }
+  let cellElem = e.currentTarget
+  let titleElem = cellElem.children[0] 
+  let fullTitle = titleElem.dataset.fullTitle
+  titleElem.innerText = fullTitle
+
+  let trashElem = cellElem.children[1]
+  trashElem.style.setProperty("display", "inline", "important")
 }
 
 let hideTitleTooltip = (e) => {
-  let link = e.target.children[0]
-  let shortTitle = link.dataset.shortTitle
-  link.innerText = shortTitle
+  let titleElem = e.currentTarget.children[0]
+  let shortTitle = titleElem.dataset.shortTitle
+  titleElem.innerText = shortTitle
+
+  let trashElem = e.currentTarget.children[1]
+  trashElem.style.setProperty("display", "none", "important")
  }
 
 let sortIconElems = document.getElementsByClassName('sort-icon')
