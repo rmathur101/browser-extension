@@ -428,16 +428,20 @@ let populateUserFeed = async() => {
     return url.url.url
   }
 
+  // easy flag to see if we should shorten the title
+  let shouldShortenTitleFlag = true 
   let getShortTitle = (url) => {
     let title = url.custom_title || url.url.title
-    return title
 
-    // for now we are not shortening the title
-    if (title.length > 40) {
-      title = title.substring(0, 36)
-      title = title + '...'
+    if (!shouldShortenTitleFlag) {
+      return title
+    } else {
+      if (title.length > 40) {
+        title = title.substring(0, 36)
+        title = title + '...'
+      }
+      return title
     }
-    return title
   }
 
   let getFullTitle = (url) => {
@@ -479,7 +483,7 @@ let populateUserFeed = async() => {
       let shortTitle = getShortTitle(url)
 
       tableRows = tableRows + `
-      <tr>
+      <tr class="saved-bookmark-row">
         <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a></td>
         <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
@@ -490,13 +494,17 @@ let populateUserFeed = async() => {
       ` 
     }
 
+    // what we'll use for the edit icon
+    {/* <span class="material-symbols-outlined bookmark-name-edit-icon">edit</span> */}
+
     // insert table rows
     document.getElementById("saved-bookmarks-table-body").innerHTML = tableRows
 
+    // removing pagination for now...
     let options = {
       valueNames: [ 'bookmark-title', 'bookmark-rating', 'bookmark-date-hidden'],
-      page: 6,
-      pagination: true
+      // page: 6,
+      // pagination: true
     };
     let savedBookmarksTable = new List('saved-bookmarks-table-cont', options);
     savedBookmarksTable.sort('bookmark-date-hidden', { order: "desc" });
@@ -508,10 +516,15 @@ let populateUserFeed = async() => {
     } 
     
     // NOTE: for now we are not displaying the tooltip to expand the title
-    // let bookmarkTitleDataCells = document.getElementsByClassName('bookmark-title-data-cell')
-    // for (const bookmarkTitleDataCell of bookmarkTitleDataCells) {
-    //   bookmarkTitleDataCell.addEventListener('mouseover', displayTitleTooltip)
-    //   bookmarkTitleDataCell.addEventListener('mouseout', hideTitleTooltip)
+    let bookmarkTitleDataCells = document.getElementsByClassName('bookmark-title-data-cell')
+    for (const bookmarkTitleDataCell of bookmarkTitleDataCells) {
+      bookmarkTitleDataCell.addEventListener('mouseover', displayTitleTooltip)
+      bookmarkTitleDataCell.addEventListener('mouseout', hideTitleTooltip)
+    }
+    // let savedBookmarkRows = document.getElementsByClassName('saved-bookmark-row')
+    // for (const SBR of savedBookmarkRows) {
+    //   SBR.addEventListener('mouseover', displayTitleTooltip)
+    //   SBR.addEventListener('mouseout', hideTitleTooltip)
     // }
 
   } else {
@@ -529,24 +542,24 @@ let openBookmarkOnClick = async(e) => {
 }
 
 // NOTE: for now we are not displaying the tooltip to expand the title
-// let displayTitleTooltip = (e) => {
-//   let target = e.target
-//   if (target.tagName != 'A') {
-//     target = target.parentElement
-//     let link = e.target.children[0]
-//     let fullTitle = link.dataset.fullTitle
-//     link.innerText = fullTitle
-//   } else {
-//     let fullTitle = target.dataset.fullTitle
-//     target.innerText = fullTitle
-//   }
-// }
+let displayTitleTooltip = (e) => {
+  let target = e.target
+  if (target.tagName != 'A') {
+    target = target.parentElement
+    let link = e.target.children[0]
+    let fullTitle = link.dataset.fullTitle
+    link.innerText = fullTitle
+  } else {
+    let fullTitle = target.dataset.fullTitle
+    target.innerText = fullTitle
+  }
+}
 
-// let hideTitleTooltip = (e) => {
-//   let link = e.target.children[0]
-//   let shortTitle = link.dataset.shortTitle
-//   link.innerText = shortTitle
-//  }
+let hideTitleTooltip = (e) => {
+  let link = e.target.children[0]
+  let shortTitle = link.dataset.shortTitle
+  link.innerText = shortTitle
+ }
 
 let sortIconElems = document.getElementsByClassName('sort-icon')
 let toggledSortIconElem = document.getElementById('default-toggled-sort-icon') 
