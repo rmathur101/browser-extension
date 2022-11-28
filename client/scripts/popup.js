@@ -35,8 +35,35 @@ function getIsShareCheckedBool() {
  }
 }
 
+let shareCheckboxInput = document.getElementById("share-checkbox-input") 
+shareCheckboxInput.addEventListener("click", async () => {
+  let shareCheckboxInputElem = document.getElementById("share-checkbox-input")
+  if (shareCheckboxInputElem.checked == true) {
+    document.getElementById("share-select").style.display = "inline"
+  } else {
+    document.getElementById("share-select").style.display = "none"
+  }
+})
+
+let getAndShowBroadcastChannels = async() => {
+  let channels = await getUserChannels()
+  if (channels && channels.length > 0) {
+    for (const channel of channels) {
+      let option = `<option value="${channel.id}">${channel.name}</option>`
+      document.getElementById("share-select").insertAdjacentHTML('beforeend', option)
+    }
+    document.getElementById("share-input-cont").style.display = "inline"
+  }
+}
+
 function getDescription() {
-  return document.getElementById("bookmark-description-value").value
+  // if bookmark descript value elem exists 
+  let elem = document.getElementById("bookmark-description-value")
+  if (elem) {
+    return elem.value
+  } else {
+    return null
+  }
 }
 
 function getShareInfo() {}
@@ -641,3 +668,22 @@ document.getElementById('bookmark-checkbox-input').addEventListener('keydown', (
     e.target.checked = !e.target.checked
   }
 })
+
+let getUserId = () => {
+  return USER_ID
+}
+
+let getUserChannels = async() => {
+  let response = await axios.get(CONFIG.API_ENDPOINT + "discord/" + getUserId())
+  console.log('get user channels response')
+  console.log(response)
+  if (response.status == 200) {
+    return response.data
+  } else {
+    console.log("Not able to retrieve channels from API!")
+    alert("Not able to retrieve channels from API!")
+  }
+}
+
+// getUserChannels()
+getAndShowBroadcastChannels()

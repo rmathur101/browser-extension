@@ -35,9 +35,11 @@
         <!-- <span id="bookmark-checkbox-info-icon" class="material-symbols-outlined">help</span> -->
       </span>
       <!-- <br> -->
-      <span id="share-input-cont" style="margin-left: 10px;">
+      <span id="share-input-cont" style="margin-left: 10px; display: none;">
         <input id="share-checkbox-input" type="checkbox" name="share-checkbox">
         <label class="bookmark-submit-label" id="share-checkbox-label" for="share-checkbox">BROADCAST</label>
+        <!-- hidden select dropdown -->
+        <select id="share-select" style="display: none"></select>
         <!-- <span id="share-checkbox-info-icon" class="material-symbols-outlined">help</span> -->
       </span>
       <br/><br/>
@@ -68,9 +70,9 @@
         <button id="submit-btn">SAVE</button>
       </span>
       <!-- NOTE HERE IS THE LOGIN STUFF -->
-      <!-- <span>
+      <span>
         <button id="login-page-btn">Login</button>
-      </span> -->
+      </span>
     </div>
     <div id="view-bookmarks-cont" style="display: none;">
       <div id="saved-bookmarks-table-cont">
