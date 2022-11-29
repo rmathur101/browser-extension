@@ -3,14 +3,21 @@
 
 let newTags = []
 let rating = null
-// temporary hardcoded USER_ID
-const USER_ID = 3
+let userId
 
 // NOTE: if there is no value for userId, then we need to show that they are forced to login or sign up, and then we'll only show them one button to do so; we can show or hide the entire container or not based on this value, until then it should just be hidden
 chrome.storage.local.get(["userId"]).then((result) => {
   console.log("User ID value currently is " + result.userId);
   if (result.userId) {
     document.getElementById("signed-in-content").style.display = "block"
+    userId = result.userId
+
+    // NOTE: gets the bookmarks of the user and populates it on the "Saved" tab
+    // TODO: probably should rename to "populateUserBookmarks" or something 
+    populateUserFeed()
+
+    // NOTE: gets the channels that user has access to and displays them
+    getAndShowBroadcastChannels()
   } else {
     document.getElementById("not-signed-in-content").style.display = "block"
   }
@@ -118,7 +125,7 @@ submitBtn.addEventListener("click", async () => {
   displayingLoadingStatus("Saving bookmark...")
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "urluser", {
-      user_id: USER_ID, // this should be test user, hardcoded for now  
+      user_id: getUserId(),  
       user_descr: description,
       rating: rating,
       bookmark: isBookmarkChecked,
@@ -260,7 +267,6 @@ function renderDisplayNewTags() {
     elem.addEventListener("click", removeTagBtnClick)
   }
 }
-
 
 function clearSubmitBookmarkRatingStars() {
     let starNumber = 5 // TODO: need to get this dynamically based on the greatest one probs
@@ -425,12 +431,11 @@ if (loginPageBtn) {
   })
 }
 
-
 let getUserUrls = async() => {
   let response = null
   displayingLoadingStatus("Refreshing your bookmarks...")
   try {
-    response = await axios.get(`${CONFIG.API_ENDPOINT}users/${USER_ID}`)
+    response = await axios.get(`${CONFIG.API_ENDPOINT}users/${getUserId()}`)
     if (response && response.data && response.data.urls) {
       await displayStatusClear(500) //TODO: do i have to make this and others with waiting into async functions and await for it
       return response.data.urls
@@ -622,7 +627,7 @@ let deleteBookmarkOnClick = async(e) => {
 
   // make post request to /urluser to delete the url using axios
   let response = await axios.post(CONFIG.API_ENDPOINT + "urluser/" + urlid, {
-    user_id: USER_ID,
+    user_id: getUserId(),
     bookmark: false
   })
 }
@@ -646,8 +651,6 @@ for (const elem of sortIconElems) {
     }
   })
 }
-
-populateUserFeed()
 
 document.getElementById('bookmark-title-input').focus()
 document.getElementById('bookmark-title-input').addEventListener('focus', (e) => {
@@ -681,7 +684,7 @@ document.getElementById('bookmark-checkbox-input').addEventListener('keydown', (
 })
 
 let getUserId = () => {
-  return USER_ID
+  return userId;
 }
 
 let getUserChannels = async() => {
@@ -695,6 +698,3 @@ let getUserChannels = async() => {
     alert("Not able to retrieve channels from API!")
   }
 }
-
-// getUserChannels()
-getAndShowBroadcastChannels()
