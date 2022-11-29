@@ -6,6 +6,17 @@ let rating = null
 // temporary hardcoded USER_ID
 const USER_ID = 3
 
+// NOTE: if there is no value for userId, then we need to show that they are forced to login or sign up, and then we'll only show them one button to do so; we can show or hide the entire container or not based on this value, until then it should just be hidden
+chrome.storage.local.get(["userId"]).then((result) => {
+  console.log("User ID value currently is " + result.userId);
+  if (result.userId) {
+    document.getElementById("signed-in-content").style.display = "block"
+  } else {
+    document.getElementById("not-signed-in-content").style.display = "block"
+  }
+});
+
+
 async function getActiveTabURL() {
   let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true});
   // TODO: need to handle the case where we are not able to find the tab (active: true, etc.)
