@@ -7,7 +7,7 @@ let userId
 
 // NOTE: if there is no value for userId, then we need to show that they are forced to login or sign up, and then we'll only show them one button to do so; we can show or hide the entire container or not based on this value, until then it should just be hidden
 chrome.storage.local.get(["userId"]).then((result) => {
-  console.log("User ID value currently is " + result.userId);
+  console.log("userId value from storage.local: " + result.userId);
   if (result.userId) {
     document.getElementById("signed-in-content").style.display = "block"
     userId = result.userId
@@ -88,6 +88,17 @@ function getShareInfo() {}
 
 function getTagInfo() {}
 
+let getShareValue = () => {
+  // TODO: share value hardcoded (#general) for now until Josca makes the fix to change BigInts to strings
+  return "1000691190074703905"
+  let val = document.getElementById("share-select").value
+  if (val == "null") {
+    return null
+  } else {
+    return val
+  }
+}
+
 function getBookmarkTitle() {
   return document.getElementById("bookmark-title-input").value
 }
@@ -126,17 +137,15 @@ submitBtn.addEventListener("click", async () => {
   try {
     const response = await axios.post(CONFIG.API_ENDPOINT + "urluser", {
       user_id: getUserId(),  
-      user_descr: description,
-      rating: rating,
+      // user_descr: description,
+      // rating: rating,
       bookmark: isBookmarkChecked,
-      share: isShareChecked,
+      share: getShareValue(),
       custom_title: customBookmarkTitle, 
       url: tabURL,
       url_title: canonicalTitle,
-      tags: newTags,
+      tags: newTags
     })
-
-    console.log(response)
 
     if (isResponseSuccess(response)) {
       await populateUserFeed()
@@ -432,10 +441,17 @@ if (loginPageBtn) {
 }
 
 let getUserUrls = async() => {
+
   let response = null
   displayingLoadingStatus("Refreshing your bookmarks...")
+
   try {
     response = await axios.get(`${CONFIG.API_ENDPOINT}users/${getUserId()}`)
+
+    console.log('response from GET /users/[userId]:')
+    console.log(response)
+    console.log('\n')
+
     if (response && response.data && response.data.urls) {
       await displayStatusClear(500) //TODO: do i have to make this and others with waiting into async functions and await for it
       return response.data.urls
@@ -446,9 +462,8 @@ let getUserUrls = async() => {
     displayErrorStatus("Failed to refresh bookmarks.")
     console.log('error caught in getUserUrls(): ')
     console.log(e)
+    console.log('\n')
   }
-  console.log('response from request in getUserUrls():')
-  console.log(response)
   return response
 }
 
@@ -493,13 +508,10 @@ let populateUserFeed = async() => {
   }
 
   let getURLID = (url) => {
-    console.log(url)
     return url.url_id + ""
   }
 
   let urls = await getUserUrls()
-  console.log("urls from response of getUserUrls():")
-  console.log(urls)
 
   // TODO: remove this, just for testing
   // urls = [
@@ -688,9 +700,13 @@ let getUserId = () => {
 }
 
 let getUserChannels = async() => {
+
   let response = await axios.get(CONFIG.API_ENDPOINT + "discord/" + getUserId())
-  console.log('get user channels response')
+
+  console.log('response from GET /discord:')
   console.log(response)
+  console.log('\n');
+
   if (response.status == 200) {
     return response.data
   } else {
