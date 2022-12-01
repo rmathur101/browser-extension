@@ -479,7 +479,7 @@ let getUserUrls = async() => {
 
 // TODO: to abstract to any table, should probably pass in the table id
 // need to create functions for getting the data from the url object
-let populateUserFeed = async() => {
+let populateUserFeed = async(selectedOption=null) => {
   let getTagsFromURL = (url) => {
     if (url && url.tags && url.tags.length > 0) {
       let returnStr = ''
@@ -535,10 +535,21 @@ let populateUserFeed = async() => {
   if (urls != null) {
     let tableRows = "" 
     for (const url of urls ) {
-      // ignore bookmarks that have been deleted
-      if (!url.bookmark) {
-        continue
+
+      // filtering logic
+      if (selectedOption == null || selectedOption == 'bookmarks') {
+        // ignore bookmarks that have been archived 
+        if (!url.bookmark) {
+          continue
+        }
+
+      } else if (selectedOption == 'archived') {
+          // ignore bookmarks that have not been archived 
+          if (url.bookmark == true) {
+            continue
+          }
       }
+
 
       // if valid date, set date to month and day if this year, otherwise add year
       let dateStr = '-'
@@ -726,3 +737,9 @@ let getUserChannels = async() => {
     alert("Not able to retrieve channels from API!")
   }
 }
+
+let savedBookmarksSelect = document.getElementById('saved-bookmarks-select')
+savedBookmarksSelect.addEventListener('change', (e) => {
+  let selectedOption = e.target.value
+  populateUserFeed(selectedOption)
+})
