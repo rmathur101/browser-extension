@@ -88,14 +88,24 @@ function getShareInfo() {}
 
 function getTagInfo() {}
 
-let getShareValue = () => {
-  // TODO: share value hardcoded (#general) for now until Josca makes the fix to change BigInts to strings
-  return "1000691190074703905"
-  let val = document.getElementById("share-select").value
-  if (val == "null") {
-    return null
+
+let shouldShare = () => {
+  let shareCheckboxInput = document.getElementById("share-checkbox-input") 
+  let shareVal = document.getElementById("share-select").value
+  if (shareCheckboxInput.checked == true && shareVal) {
+    return true
   } else {
-    return val
+    return false
+  }
+
+}
+let getShareValue = () => {
+  if (shouldShare()) {
+    // TODO: share value hardcoded (#general) for now until Josca makes the fix to change BigInts to strings
+    return "1000691190074703905"
+    return document.getElementById("share-select").value
+  } else {
+    return null
   }
 }
 
@@ -642,6 +652,8 @@ let deleteBookmarkOnClick = async(e) => {
     user_id: getUserId(),
     bookmark: false
   })
+
+  await populateUserFeed()
 }
 
 
