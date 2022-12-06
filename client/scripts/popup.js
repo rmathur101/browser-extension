@@ -477,6 +477,9 @@ let getUserUrls = async() => {
   return response
 }
 
+// NOTE: JSON object where the key is the URLID and the value is object with bookmark data (we'll use this to retrieve info about the bookmarks, e.g. in bookmark info modal)
+let bookmarksData = {}
+
 // TODO: to abstract to any table, should probably pass in the table id
 // need to create functions for getting the data from the url object
 let populateUserFeed = async(selectedOption=null) => {
@@ -535,6 +538,16 @@ let populateUserFeed = async(selectedOption=null) => {
   if (urls != null) {
     let tableRows = "" 
     for (const url of urls ) {
+      bookmarksData[getURLID(url)] = {
+        url: url.url,
+        title: getFullTitle(url),
+        tags: getTagsFromURL(url),
+        rating: url.rating,
+        created_at: url.created_at,
+        bookmark: url.bookmark,
+        user_descr: url.user_descr,
+        custom_title: url.custom_title
+      }
 
       // filtering logic
       if (selectedOption == null || selectedOption == 'bookmarks') {
@@ -628,6 +641,9 @@ let populateUserFeed = async(selectedOption=null) => {
     console.log("Not able to retrieve urls from API!")
     alert("Not able to retrieve urls from API!")
   }
+
+  console.log('bookmarks data')
+  console.log(bookmarksData)
 }
 
 let openBookmarkOnClick = async(e) => {
@@ -747,11 +763,18 @@ savedBookmarksSelect.addEventListener('change', (e) => {
   populateUserFeed(selectedOption)
 })
 
-let showBookmarkInfo = (e) => {
+let showBookmarkInfo = (URLID, shouldPin=false) => {
   let bookmarkInfo = document.getElementById('bookmark-info')
   bookmarkInfo.classList.remove('hidden')
+
   // NOTE: we remove this class to remove styling from previously pinned bookmark info (this is necessary for the case in which we are showing the bookmark info but not pinning it yet)
-  bookmarkInfo.classList.remove('modal-pinned')
+  if (shouldPin) {
+    bookmarkInfo.classList.add('modal-pinned')
+  } else {
+    bookmarkInfo.classList.remove('modal-pinned')
+  }
+
+  populateBookmarkInfo(URLID)
 }
 
 let hideBookmarkInfo = (e) => {
@@ -759,24 +782,31 @@ let hideBookmarkInfo = (e) => {
   bookmarkInfo.classList.add('hidden')
 }
 
-let pinnedBookMarkInfoURLID = null
 let pinnedBookMarkInfoIcon = null
+let setPinnedBookMarkInfoIcon = (elem) => {
+  pinnedBookMarkInfoIcon = elem 
+}
+
+let pinnedBookMarkInfoURLID = null
 let setPinnedBookMarkInfo = (URLID) => {
   pinnedBookMarkInfoURLID = URLID 
 }
 
 let pinBookmarkInfo = (e) => {
-  pinnedBookMarkInfoIcon = e.currentTarget
-  pinnedBookMarkInfoIcon.classList.add('saved-bookmark-info-icon-filled')
 
-  let URLID = pinnedBookMarkInfoIcon.dataset.urlid
+  // make icon filled 
+  e.currentTarget.classList.add('saved-bookmark-info-icon-filled')
+
+  // set the pinned element
+  setPinnedBookMarkInfoIcon(e.currentTarget)
+
+  // get the URLID and set it
+  let URLID = e.currentTarget.dataset.urlid
   setPinnedBookMarkInfo(URLID)
 
-  showBookmarkInfo()
+  // show the modal (with the overlay)
+  showBookmarkInfo(URLID, true)
   showBackgroundOverlay()
-
-  let bookmarkInfo = document.getElementById('bookmark-info')
-  bookmarkInfo.classList.add('modal-pinned')
 }
 
 let showBackgroundOverlay = (e) => {
@@ -787,6 +817,15 @@ let showBackgroundOverlay = (e) => {
 let hideBackgroundOverlay = (e) => {
   let backgroundOverlay = document.getElementById('background-overlay')
   backgroundOverlay.classList.add('hidden')
+}
+
+let getTitleFromBookmarkData = (URLID) => {
+  return bookmarksData[URLID].title
+}
+
+let populateBookmarkInfo = (URLID) => {
+  let biTitle = document.getElementById('bi-title')
+  biTitle.innerText = getTitleFromBookmarkData(URLID)
 }
 
 let addSavedBookmarkInfoIconListeners = () => {
@@ -803,13 +842,12 @@ let addSavedBookmarkInfoIconListeners = () => {
   for (const savedBookmarkInfoIcon of savedBookmarkInfoIcons) {
     // add listener to all saved-bookmark-info-icon elements to display popup on hover
     savedBookmarkInfoIcon.addEventListener('mouseover', (e) => {
-      console.log('mouseover')
-      showBookmarkInfo()
+      let URLID = e.currentTarget.dataset.urlid
+      showBookmarkInfo(URLID)
     })
     // add listener to all saved-bookmark-info-icon elements to hide popup on mouseout 
     savedBookmarkInfoIcon.addEventListener('mouseout', (e) => {
       if (pinnedBookMarkInfoURLID == null) {
-        console.log('mouseout')
         hideBookmarkInfo()
       }
     })
