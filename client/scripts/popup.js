@@ -539,7 +539,7 @@ let populateUserFeed = async(selectedOption=null) => {
     let tableRows = "" 
     for (const url of urls ) {
       bookmarksData[getURLID(url)] = {
-        url: url.url,
+        url: url.url.url,
         title: getFullTitle(url),
         tags: getTagsFromURL(url),
         rating: url.rating,
@@ -615,12 +615,13 @@ let populateUserFeed = async(selectedOption=null) => {
       bookmarkURLLink.addEventListener('click', openBookmarkOnClick)
     } 
     
+    // NOTE: we've commented this out for now, we've moved to a design where we have the info icon that will be used to expand the bookmark info modal - leaving this here just in case
     // add listeners to expand and collapse the title
-    let bookmarkTitleDataCells = document.getElementsByClassName('bookmark-title-data-cell')
-    for (const bookmarkTitleDataCell of bookmarkTitleDataCells) {
-      bookmarkTitleDataCell.addEventListener('mouseover', displayTitleTooltip)
-      bookmarkTitleDataCell.addEventListener('mouseout', hideTitleTooltip)
-    }
+    // let bookmarkTitleDataCells = document.getElementsByClassName('bookmark-title-data-cell')
+    // for (const bookmarkTitleDataCell of bookmarkTitleDataCells) {
+    //   bookmarkTitleDataCell.addEventListener('mouseover', displayTitleTooltip)
+    //   bookmarkTitleDataCell.addEventListener('mouseout', hideTitleTooltip)
+    // }
 
     // add listeners to delete the bookmark
     let savedBookmarkTrashIcons = document.getElementsByClassName('saved-bookmark-trash-icon')
@@ -819,13 +820,18 @@ let hideBackgroundOverlay = (e) => {
   backgroundOverlay.classList.add('hidden')
 }
 
-let getTitleFromBookmarkData = (URLID) => {
+let getTitleFromBookmarksData = (URLID) => {
   return bookmarksData[URLID].title
 }
 
+let getURLFromBookmarksData = (URLID) => {
+  return bookmarksData[URLID].url
+}
+
 let populateBookmarkInfo = (URLID) => {
-  let biTitle = document.getElementById('bi-title')
-  biTitle.innerText = getTitleFromBookmarkData(URLID)
+  let title = getTitleFromBookmarksData(URLID)
+  let url = getURLFromBookmarksData(URLID) 
+  document.getElementById('bi-title').innerHTML = `<a class="bookmark-URL-link" href="${url}" target="_blank">${title}</a>`
 }
 
 let addSavedBookmarkInfoIconListeners = () => {
