@@ -570,10 +570,11 @@ let populateUserFeed = async(selectedOption=null) => {
 
       tableRows = tableRows + `
       <tr class="saved-bookmark-row">
+        <td style="text-align: center;"><span class="material-symbols-outlined saved-bookmark-info-icon" data-urlid="${getURLID(url)}">info</span></td>
         <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a><span class="material-symbols-outlined saved-bookmark-trash-icon" data-urlid="${getURLID(url)}">delete_forever</span></td>
         <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
-        <td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>
+        ${null/*<td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>*/}
         <td class="bookmark-date">${dateStr}</td>
         <td class="bookmark-date-hidden" style="display: none">${dateNum}</td>
       </tr>
@@ -613,6 +614,8 @@ let populateUserFeed = async(selectedOption=null) => {
     for (const savedBookmarkTrashIcon of savedBookmarkTrashIcons) {
       savedBookmarkTrashIcon.addEventListener('click', deleteBookmarkOnClick)
     }
+
+    addSavedBookmarkInfoIconListeners()
 
     // for now we're not doing this, but this is for hiding / appearing on table row hover
     // let savedBookmarkRows = document.getElementsByClassName('saved-bookmark-row')
@@ -743,3 +746,87 @@ savedBookmarksSelect.addEventListener('change', (e) => {
   let selectedOption = e.target.value
   populateUserFeed(selectedOption)
 })
+
+let showBookmarkInfo = (e) => {
+  let bookmarkInfo = document.getElementById('bookmark-info')
+  bookmarkInfo.classList.remove('hidden')
+  // NOTE: we remove this class to remove styling from previously pinned bookmark info (this is necessary for the case in which we are showing the bookmark info but not pinning it yet)
+  bookmarkInfo.classList.remove('modal-pinned')
+}
+
+let hideBookmarkInfo = (e) => {
+  let bookmarkInfo = document.getElementById('bookmark-info')
+  bookmarkInfo.classList.add('hidden')
+}
+
+let pinnedBookMarkInfoURLID = null
+let pinnedBookMarkInfoIcon = null
+let setPinnedBookMarkInfo = (URLID) => {
+  pinnedBookMarkInfoURLID = URLID 
+}
+
+let pinBookmarkInfo = (e) => {
+  pinnedBookMarkInfoIcon = e.currentTarget
+  pinnedBookMarkInfoIcon.classList.add('saved-bookmark-info-icon-filled')
+
+  let URLID = pinnedBookMarkInfoIcon.dataset.urlid
+  setPinnedBookMarkInfo(URLID)
+
+  showBookmarkInfo()
+  showBackgroundOverlay()
+
+  let bookmarkInfo = document.getElementById('bookmark-info')
+  bookmarkInfo.classList.add('modal-pinned')
+}
+
+let showBackgroundOverlay = (e) => {
+  let backgroundOverlay = document.getElementById('background-overlay')
+  backgroundOverlay.classList.remove('hidden')
+}
+
+let hideBackgroundOverlay = (e) => {
+  let backgroundOverlay = document.getElementById('background-overlay')
+  backgroundOverlay.classList.add('hidden')
+}
+
+let addSavedBookmarkInfoIconListeners = () => {
+  
+  let savedBookmarkInfoIcons = document.getElementsByClassName('saved-bookmark-info-icon')
+
+  // remove listener from all saved-bookmark-info-icon elements to display popup on hover
+  for (const savedBookmarkInfoIcon of savedBookmarkInfoIcons) {
+    savedBookmarkInfoIcon.removeEventListener('mouseover', (e) => {})
+    savedBookmarkInfoIcon.removeEventListener('mouseout', (e) => {})
+    savedBookmarkInfoIcon.removeEventListener('click', (e) => {})
+  }
+
+  for (const savedBookmarkInfoIcon of savedBookmarkInfoIcons) {
+    // add listener to all saved-bookmark-info-icon elements to display popup on hover
+    savedBookmarkInfoIcon.addEventListener('mouseover', (e) => {
+      console.log('mouseover')
+      showBookmarkInfo()
+    })
+    // add listener to all saved-bookmark-info-icon elements to hide popup on mouseout 
+    savedBookmarkInfoIcon.addEventListener('mouseout', (e) => {
+      if (pinnedBookMarkInfoURLID == null) {
+        console.log('mouseout')
+        hideBookmarkInfo()
+      }
+    })
+    // add listener on click to all saved-bookmark-info-icon elements
+    savedBookmarkInfoIcon.addEventListener('click', pinBookmarkInfo)
+  }
+}
+
+// add listener to close-bookmark-info-btn on click
+document.getElementById('close-bookmark-info-btn').addEventListener('click', (e) => {
+  hideBookmarkInfo()
+  hideBackgroundOverlay()
+  setPinnedBookMarkInfo(null)
+
+  // remove filled class from pinned bookmark info icon
+  if (pinnedBookMarkInfoIcon != null) {
+    pinnedBookMarkInfoIcon.classList.remove('saved-bookmark-info-icon-filled')
+  }
+})
+

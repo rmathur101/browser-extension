@@ -12,6 +12,7 @@
           <span class="selected-tab" id="create-bookmark-tab">BOOKMARK</span>
           <span class="unselected-tab" id="view-bookmarks-tab">SAVED</span>
           <span class="unselected-tab" id="view-feed-tab">FEED</span>
+          <span class="unselected-tab">DASHBOARD?</span>
           <span id="status-cont"></span>
         </div>
         <br>
@@ -84,15 +85,19 @@
             </select>
             <table id="saved-bookmarks-table">
               <thead>
-                <th class="noselect">
+                <th style="width: 1px;" class="noselect">
+                  <span style="vertical-align: middle;"></span>
+                </th>
+                <th style="width: 150px;" class="noselect">
                   <span style="vertical-align: middle;">Name</span>
                   <span data-insensitive="true" data-sort="bookmark-title" class="sort-icon sort material-symbols-outlined">swap_vert</span>
                 </th>
                 <th>Tags</th>
-                <th class="noselect">
+                <!-- NOTE: ignoring Rating for now -->
+                <!-- <th class="noselect" style="width: 50px;">
                   <span style="vertical-align: middle;">Rating</span>
                   <span data-sort="bookmark-rating" class="sort-icon sort material-symbols-outlined">swap_vert</span>
-                </th>
+                </th> -->
                 <th class="noselect">
                   <span style="vertical-align: middle;">Date</span>
                   <span id="default-toggled-sort-icon" data-sort="bookmark-date-hidden" class="sort-icon sort material-symbols-outlined">north</span>
@@ -102,6 +107,21 @@
               <tbody class="list" id="saved-bookmarks-table-body"></tbody>
             </table>
             <ul id="saved-bookmarks-table-pag" class="pagination"></ul>
+
+            <!-- NOTE: this is the modal container for bookmark info -->
+            <section id="bookmark-info" class="modal hidden">
+              <div>
+                <button id="close-bookmark-info-btn" style="float: right;" >x</button>
+              </div>
+              <div>
+                <h3>Title?</h3>
+                <p>
+                  Description, tags, etc?
+                </p>
+              </div>
+            </section>
+            <!-- this is the dark blurred background behind the modal -->
+            <div id="background-overlay" class="overlay hidden"></div>
           </div>
         </div>
         <div id="view-feed-cont" style="display: none">
