@@ -541,7 +541,7 @@ let populateUserFeed = async(selectedOption=null) => {
       bookmarksData[getURLID(url)] = {
         url: url.url.url,
         title: getFullTitle(url),
-        tags: getTagsFromURL(url),
+        tags: url.tags,
         rating: url.rating,
         created_at: url.created_at,
         bookmark: url.bookmark,
@@ -828,10 +828,40 @@ let getURLFromBookmarksData = (URLID) => {
   return bookmarksData[URLID].url
 }
 
+let getDateFromBookmarksData = (URLID) => {
+  let dateStr = ''
+  let createdAt =  bookmarksData[URLID].created_at 
+  let momentDate = moment(createdAt)
+  if (momentDate.isValid()) {
+    if (momentDate.format('YYYY') == moment().format('YYYY')) {
+      dateStr = moment(createdAt).format('MMM D')
+    } else {
+      dateStr = moment(createdAt).format('MMM D, YY')
+    }
+  }
+  return dateStr
+}
+
+let getTagsHTMLFromBookmarksData = (URLID) => {
+  let tags = bookmarksData[URLID].tags
+  if (tags && tags.length > 0) {
+    let returnStr = ''
+    for (const tag of tags) {
+      returnStr += `<span>${tag}</span>`
+    }
+  } else {
+    return 'None'
+  }
+}
+
 let populateBookmarkInfo = (URLID) => {
   let title = getTitleFromBookmarksData(URLID)
   let url = getURLFromBookmarksData(URLID) 
+  let tags = getTagsHTMLFromBookmarksData(URLID)
+  let date = getDateFromBookmarksData(URLID)
   document.getElementById('bi-title').innerHTML = `<a class="bookmark-URL-link" href="${url}" target="_blank">${title}</a>`
+  document.getElementById('bi-tags').innerHTML = tags
+  document.getElementById('bi-date').innerHTML = date
 }
 
 let addSavedBookmarkInfoIconListeners = () => {
