@@ -365,11 +365,12 @@ span:focus {
 	cursor: pointer;
 	vertical-align: middle;
 	display: inline-block;
+	/* z-index: 3; */
 }
 
-.saved-bookmark-info-icon:hover {
+/* .saved-bookmark-info-icon:hover {
 	font-variation-settings: 'FILL' 1;
-}
+} */
 
 .saved-bookmark-info-icon-filled {
 	font-variation-settings: 'FILL' 1;
@@ -417,6 +418,7 @@ span:focus {
   background: rgba(0, 0, 0, 0.4);
   /* backdrop-filter: blur(3px); */
   z-index: 1;
+	pointer-events: none;
 }
 
 .hidden {

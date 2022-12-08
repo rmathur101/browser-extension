@@ -583,7 +583,7 @@ let populateUserFeed = async(selectedOption=null) => {
 
       tableRows = tableRows + `
       <tr class="saved-bookmark-row">
-        <td style="text-align: center;"><span class="material-symbols-outlined saved-bookmark-info-icon" data-urlid="${getURLID(url)}">info</span></td>
+        <td style="text-align: center;"><span class="material-symbols-outlined saved-bookmark-info-icon noselect" data-urlid="${getURLID(url)}">info</span></td>
         <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a><span class="material-symbols-outlined saved-bookmark-trash-icon" data-urlid="${getURLID(url)}">delete_forever</span></td>
         <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
         <td class="bookmark-tags">${getTagsFromURL(url)}</td>
@@ -793,16 +793,37 @@ let setPinnedBookMarkInfo = (URLID) => {
   pinnedBookMarkInfoURLID = URLID 
 }
 
+let unpinBookmarkInfo = (elem) => {
+  elem.classList.remove('saved-bookmark-info-icon-filled')
+
+  setPinnedBookMarkInfoIcon(null)
+  setPinnedBookMarkInfo(null)
+
+  hideBookmarkInfo()
+  hideBackgroundOverlay() 
+}
+
 let pinBookmarkInfo = (e) => {
+  // NOTE: this is the URLID of the bookmark info
+  let URLID = e.currentTarget.dataset.urlid
+
+  // if the bookmark info is already pinned, unpin it
+  if (URLID == pinnedBookMarkInfoURLID) {
+    unpinBookmarkInfo(e.currentTarget)
+    return
+  }
+
+  // if the bookmark info is not already pinned, but there is already a pinned one 
+  if (pinnedBookMarkInfoURLID != null && pinnedBookMarkInfoURLID != e.currentTarget.dataset.urlid) {
+    unpinBookmarkInfo(pinnedBookMarkInfoIcon)
+  }
 
   // make icon filled 
   e.currentTarget.classList.add('saved-bookmark-info-icon-filled')
 
   // set the pinned element
   setPinnedBookMarkInfoIcon(e.currentTarget)
-
   // get the URLID and set it
-  let URLID = e.currentTarget.dataset.urlid
   setPinnedBookMarkInfo(URLID)
 
   // show the modal (with the overlay)
@@ -849,6 +870,7 @@ let getTagsHTMLFromBookmarksData = (URLID) => {
     for (const tag of tags) {
       returnStr += `<span>${tag}</span>`
     }
+    return returnStr
   } else {
     return 'None'
   }
@@ -878,13 +900,20 @@ let addSavedBookmarkInfoIconListeners = () => {
   for (const savedBookmarkInfoIcon of savedBookmarkInfoIcons) {
     // add listener to all saved-bookmark-info-icon elements to display popup on hover
     savedBookmarkInfoIcon.addEventListener('mouseover', (e) => {
-      let URLID = e.currentTarget.dataset.urlid
-      showBookmarkInfo(URLID)
+      // NOTE: only show the bookmark info if there is no pinned bookmark info
+      if (pinnedBookMarkInfoURLID == null) {
+        e.currentTarget.classList.add('saved-bookmark-info-icon-filled')
+        let URLID = e.currentTarget.dataset.urlid
+        showBookmarkInfo(URLID)
+        console.log('mouseover')
+      }
     })
     // add listener to all saved-bookmark-info-icon elements to hide popup on mouseout 
     savedBookmarkInfoIcon.addEventListener('mouseout', (e) => {
       if (pinnedBookMarkInfoURLID == null) {
+        e.currentTarget.classList.remove('saved-bookmark-info-icon-filled')
         hideBookmarkInfo()
+        console.log('mouseout')
       }
     })
     // add listener on click to all saved-bookmark-info-icon elements
