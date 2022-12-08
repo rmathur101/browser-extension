@@ -94,7 +94,7 @@ body, input, textarea {
 	cursor: pointer;
 }
 
-#submit-btn, #add-tag-btn, #new-tag-done-btn, #new-tag-cancel-btn {
+#submit-btn, #add-tag-btn, #new-tag-done-btn, #new-tag-cancel-btn , #close-bookmark-info-btn {
 	border-radius: 2px;
 	border: 1px solid #716397;
 	font-family: 'Montserrat';
@@ -108,15 +108,15 @@ body, input, textarea {
 	font-size: 12px;
 }
 
-#submit-btn:hover, #add-tag-btn:hover, #new-tag-done-btn:hover {
+#submit-btn:hover, #add-tag-btn:hover, #new-tag-done-btn:hover, #close-bookmark-info-btn:hover {
 	background-color: #716397;
 	color: white;
 }
 
-#submit-btn:focus, #add-tag-btn:focus, #new-tag-done-btn:focus {
+/* #submit-btn:focus, #add-tag-btn:focus, #new-tag-done-btn:focus {
 	background-color: #716397;
 	color: white;
-}
+} */
 
 #new-tag-cancel-btn:hover {
 	border: 1px solid #f44336;
