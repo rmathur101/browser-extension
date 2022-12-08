@@ -417,6 +417,7 @@ function showViewFeedTab() {
 
   let e = document.getElementById('popup-container')
   e.style.minHeight = '500px'
+  e.style.maxHeight = '500px'
 }
 
 function showViewBooksmarksTab() {
@@ -428,6 +429,7 @@ function showViewBooksmarksTab() {
 
   let e = document.getElementById('popup-container')
   e.style.minHeight = '500px'
+  e.style.maxHeight = '500px'
 }
 
 let bookmarkTabElem = document.getElementById("create-bookmark-tab")

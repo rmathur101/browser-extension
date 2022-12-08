@@ -436,3 +436,15 @@ span:focus {
   overflow-y: scroll;
   display: block
 } */
+
+#saved-bookmarks-table-wrapper {
+	max-height: 400px; 
+	overflow: auto;
+}
+
+/* Add also the following code if sticky header is wanted */
+#saved-bookmarks-table-wrapper table thead th {
+  background: white;
+  position: sticky;
+  top: 0;
+}
