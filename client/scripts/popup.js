@@ -485,15 +485,16 @@ let bookmarksData = {}
 // TODO: to abstract to any table, should probably pass in the table id
 // need to create functions for getting the data from the url object
 let populateUserFeed = async(selectedOption=null) => {
+
   let getTagsFromURL = (url) => {
     if (url && url.tags && url.tags.length > 0) {
       let returnStr = ''
       for (const tag of url.tags) {
-        returnStr = returnStr + tag.name + ' '
+        returnStr = returnStr + `<span class="table-tag">${tag.name}</span>`
       }
       return returnStr
     } else {
-      return 'None'
+      return '<span>None</span>'
     }
   }
 
@@ -588,7 +589,7 @@ let populateUserFeed = async(selectedOption=null) => {
         <td style="text-align: center;"><span class="material-symbols-outlined saved-bookmark-info-icon noselect" data-urlid="${getURLID(url)}">info</span></td>
         <td class="bookmark-title-data-cell"><a data-full-title="${fullTitle}" data-short-title="${shortTitle}" class="bookmark-title bookmark-URL-link" href=${getURLLink(url)} target="_blank">${shortTitle}</a><span class="material-symbols-outlined saved-bookmark-trash-icon" data-urlid="${getURLID(url)}">delete_forever</span></td>
         <td style="display: none;"><a href=${getURLLink(url)} target="_blank">${url.custom_title || url.url.title}</a></td>
-        <td class="bookmark-tags">${getTagsFromURL(url)}</td>
+        ${null/*<td class="bookmark-tags">${getTagsFromURL(url)}</td>*/}
         ${null/*<td class="bookmark-rating">${(url.rating == null ? 'None' : url.rating)}</td>*/}
         <td class="bookmark-date">${dateStr}</td>
         <td class="bookmark-date-hidden" style="display: none">${dateNum}</td>
@@ -870,11 +871,19 @@ let getTagsHTMLFromBookmarksData = (URLID) => {
   if (tags && tags.length > 0) {
     let returnStr = ''
     for (const tag of tags) {
-      returnStr += `<span>${tag}</span>`
+      returnStr += `<span class="new-tag bi-tag">${tag.name}</span>`
     }
     return returnStr
   } else {
-    return 'None'
+    return ''
+  }
+}
+
+let getBookmarkStatusFromBookmarksData = (URLID) => {
+  if (bookmarksData[URLID].bookmark) {
+    return 'bookmarked'
+  } else if (bookmarksData[URLID].bookmark == false) {
+    return 'archived'
   }
 }
 
@@ -884,8 +893,9 @@ let populateBookmarkInfo = (URLID) => {
   let tags = getTagsHTMLFromBookmarksData(URLID)
   let date = getDateFromBookmarksData(URLID)
   document.getElementById('bi-title').innerHTML = `<a class="bookmark-URL-link" href="${url}" target="_blank">${title}</a>`
+  document.getElementById('bi-date').innerHTML = 'Bookmarked: ' + date
   document.getElementById('bi-tags').innerHTML = tags
-  document.getElementById('bi-date').innerHTML = date
+  document.getElementById('bi-status-select').value = getBookmarkStatusFromBookmarksData(URLID)
 }
 
 let addSavedBookmarkInfoIconListeners = () => {
@@ -935,3 +945,25 @@ document.getElementById('close-bookmark-info-btn').addEventListener('click', (e)
   }
 })
 
+let getCurrentSavedBookmarksFilterValue = () => {
+  let filterValue = document.getElementById('saved-bookmarks-select').value
+  return filterValue
+}
+
+// NOTE: basically you've implemented a basic version of this, works at some level, but you need to mind about what happens to the pinned id and pinned element when you changed the status (archived / bookmark), at the very least because you are re-populating you should likely change the pinned element value because the element would not be accurate anymore, right? this is why we're setting the icon to null (but we are keeping the pinned id the same)
+// add listener to bi-status-select on change
+document.getElementById('bi-status-select').addEventListener('change', async(e) => {
+  let URLID = pinnedBookMarkInfoURLID
+  // for now a false value implies archived
+  let newVal = e.currentTarget.value == 'bookmarked' ? true : false
+  const response = axios.post(CONFIG.API_ENDPOINT + 'urluser/' + URLID, {
+    bookmark: newVal,
+    user_id: getUserId()
+  })
+  await populateUserFeed(getCurrentSavedBookmarksFilterValue())
+  setPinnedBookMarkInfoIcon(null)
+  // console.log('this is the response from the post after select value changes');
+  // console.log(response)
+  // console.log(pinnedBookMarkInfoIcon)
+  // console.log(pinnedBookMarkInfoURLID)
+})
