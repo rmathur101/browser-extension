@@ -26,9 +26,7 @@ class UrlUserBase(SQLModel):
     user_descr: Optional[str] = None
     rating: Optional[Rating] = None
     bookmark: Optional[bool] = None
-    share: Optional[int] = Field(
-        sa_column=Column(BigInteger(), default=None, nullable=True)
-    )
+    share: Optional[str] = None
     custom_title: Optional[str] = None
 
 

@@ -126,8 +126,11 @@ def share_url_to_discord(user, url, descr, channel_id):
             detail=f"The user {user.id} has not linked their discord account",
         )
     else:
+        assert channel_id is not None, "A valid channel id must be provided"
+        assert channel_id.isdigit(), "The channel id must be a valid number"
+
         message = f"{descr} {url.url}"
-        discord_send_message(message=message, user=user, thread_id=channel_id)
+        discord_send_message(message=message, user=user, thread_id=int(channel_id))
 
 
 def create_tag(tag, url_id, user_id):
