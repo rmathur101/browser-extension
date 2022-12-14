@@ -1,10 +1,10 @@
 const DISCORD_URI_ENDPOINT = 'https://discord.com/api/oauth2/authorize';
 
 // josca's app's client id
-// const CLIENT_ID = encodeURIComponent('1023480020729090058');
+const CLIENT_ID = encodeURIComponent('1023480020729090058');
 
 // firecat's app's client id
-const CLIENT_ID = encodeURIComponent('1025143058116911144');
+// const CLIENT_ID = encodeURIComponent('1025143058116911144');
 
 const RESPONSE_TYPE = encodeURIComponent('code');
 const REDIRECT_URI = encodeURIComponent('https://ibldghmofcjajbnjofakcemodnlmnfnf.chromiumapp.org');

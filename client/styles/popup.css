@@ -12,8 +12,15 @@
 	background-size: 400% 400%;
 	animation: gradient 15s ease infinite;
 
-  width: 500px;
-  height: 150px;
+  width: 700px;
+  min-height: 280px;
+	margin: 0px;
+	padding: 10px 10px 10px 10px;
+
+	background-color: white;
+	/* background-color: #181b18; */ /* this is like an onyx thing */ 
+	color: gray;
+	border: 2px solid #716397;
 }
 
 @keyframes gradient {
@@ -54,8 +61,17 @@ body, input, textarea {
 }
 
 #add-tag-btn {
-	font-size: 20px;
-	color: green;
+	font-size: 13px !important;
+	padding: 0px 0px 0px 0px;
+	height: 20px;
+	width: 20px;
+}
+
+#bookmark-checkbox-input, #share-checkbox-input {
+	font-size: 13px !important;
+	padding: 0px 0px 0px 0px;
+	height: 15px;
+	width: 15px;
 }
 
 /* #bookmark-checkbox-input, #share-checkbox-input {
@@ -78,14 +94,38 @@ body, input, textarea {
 	cursor: pointer;
 }
 
-#new-tag-cont {
-	display: none
+#submit-btn, #add-tag-btn, #new-tag-done-btn, #new-tag-cancel-btn , #close-bookmark-info-btn {
+	border-radius: 2px;
+	border: 1px solid #716397;
+	font-family: 'Montserrat';
+	font-size: 20px;
+	background-color: #f1f0f5;
+	color: #716397;
+	cursor: pointer;
 }
 
-#new-tags-display-cont > span {
-	border: 1px solid black;
-	margin-right: 5px;
-	cursor: pointer;
+#new-tag-done-btn, #new-tag-cancel-btn {
+	font-size: 12px;
+}
+
+#submit-btn:hover, #add-tag-btn:hover, #new-tag-done-btn:hover, #close-bookmark-info-btn:hover {
+	background-color: #716397;
+	color: white;
+}
+
+/* #submit-btn:focus, #add-tag-btn:focus, #new-tag-done-btn:focus {
+	background-color: #716397;
+	color: white;
+} */
+
+#new-tag-cancel-btn:hover {
+	border: 1px solid #f44336;
+	box-shadow: 0px 0px 2px 2px #f44336;
+	color: #f44336;
+}
+
+#new-tag-cont {
+	display: none
 }
 
 #bookmark-submit-rating-stars-cont {
@@ -111,23 +151,342 @@ body, input, textarea {
 }
 
 #create-bookmark-tab, #view-feed-tab, #view-bookmarks-tab {
-	cursor: pointer;
 	font-size: 20px;
-	border: 1px solid black;
 }
 
 .selected-tab {
-	background-color: black;
-	color: white;
+	color: #716397;
+	text-decoration: underline;
+	cursor: default;
+}
+
+.unselected-tab {
+	color: #716397;
+	opacity: 75%;
+}
+
+.unselected-tab:hover {
+	cursor: pointer;
+	color:#716397;
+	opacity: 100%;
+	text-decoration: underline;
 }
 
 .bookmark-URL-link {
-	text-decoration: underline;
-	color: black;
+	text-decoration: none;
+	color: #716397;
+	font-weight: 500;
 }
 .bookmark-URL-link:hover {
-	color: green;
+	color: #716397;
+	text-decoration: underline;
+}
+
+.sort-icon {
+	font-size: 16px !important;
+	vertical-align: middle;
+	cursor: pointer;
+	color: #716397;
+}
+
+.sort-icon:hover {
+	color: #716397;
+	text-decoration: underline;
 }
 
 
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
 
+#saved-bookmarks-table {
+	table-layout: fixed;
+	/* NOTE: we're keeping the width option for now, in the future we may remove it so that we can define the widths of each column separatley, and not have a fixed width (which I believe should enable us to enable a fixed header with scrolling) */
+	width: 700px;
+	border-spacing: 3px;
+}
+
+th, td {
+	padding:5px; 
+  border:solid 1px #eee; /* is this a good color? */
+	width: 50px;
+	height: 20px;
+	overflow: hidden;
+}
+
+/* remove the focus outline when the user clicks on the search field */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus,
+span:focus {
+	outline: none;
+}
+
+#bookmark-title-input, #bookmark-description-value {
+	width: 95%;
+}
+
+#bookmark-title-input, #bookmark-description-value, #saved-bookmarks-search, #new-tag-input {
+	border: 1px solid #716397;
+	padding: 4px 4px 4px 4px;
+	border-radius: 2px;
+	opacity: 1;
+	margin-bottom: 10px;
+	color:#716397;
+	font-size: 15px;
+	background-color: #f1f0f5;
+	/* color: black; this is still an open question... */
+}
+
+#new-tag-input {
+	font-size: 12px;
+	padding: 2px 4px 2px 4px;
+}
+
+#bookmark-title-input:focus, #bookmark-description-value:focus, #saved-bookmarks-search:focus, #new-tag-input:focus {
+	box-shadow: 0px 0px 0px 1px #716397;
+	opacity: 1;
+	/* border: 1px solid #003167; substructure website colors */
+}
+
+#bookmark-title-input:hover, #bookmark-description-value:hover, #saved-bookmarks-search:hover, #new-tag-input:hover {
+	box-shadow: 0px 0px 0px 1px #716397;
+	opacity: 1;
+}
+
+#saved-bookmarks-search {
+	width: 200px;
+}
+
+/* this is the placeholder in a search input */
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #716397;
+  opacity: 0.5; /* Firefox */
+}
+
+.tag-name {
+	color: #716397;
+	vertical-align: middle;
+}
+
+.remove-tag-btn {
+ 	font-size: 11px !important; 
+	vertical-align: middle; 
+	color: #716397;
+	cursor: pointer;
+	display: none;
+}
+
+.remove-tag-btn:hover {
+	color: #f44336;
+}
+
+.new-tag {
+	border: 1px solid #716397;
+	/* background-color: #f1f0f5; this was the old background color */
+	color: #716397;
+	margin-right: 5px;
+	border-radius: 3px;
+	padding: 1px 3px 1px 3px;
+	opacity: 1;
+	font-size: 12px;
+}
+
+.table-tag {
+	border: 1px solid #716397;
+	/* background-color: #f1f0f5; this was the old background color */
+	color: #716397;
+	margin-right: 5px;
+	border-radius: 3px;
+	padding: 1px 3px 1px 3px;
+	opacity: 1;
+	font-size: 12px;
+}
+
+.remove-tag-hover {
+	border: 1px solid #f44336 !important;
+	box-shadow: 0px 0px 2px 2px #f44336 !important;
+	color: #f44336 !important;
+	opacity: 1;
+}
+
+#saved-bookmarks-table-pag li {
+	display: inline;
+	margin-right: 10px;
+	font-size: 15px;
+}
+
+#saved-bookmarks-table-pag li:hover {
+	text-decoration: underline;
+}
+
+#saved-bookmarks-table-pag li a {
+	color:#716397;
+	text-decoration: none;
+}
+
+#saved-bookmarks-table-pag li.active a {
+	text-decoration: underline;
+}
+
+#saved-bookmarks-table-pag li.disabled a {
+	text-decoration: none;
+}
+
+#saved-bookmarks-table-pag {
+	padding: 0px 0px 0px 0px;
+}
+
+/* not used for now */
+/* .checkbox-input-focus {
+	-webkit-box-shadow: 0px 0px 0px 1px #716397;
+	-moz-box-shadow: 0px 0px 0px 1px #716397;
+	box-shadow: 0px 0px 0px 2px #716397;
+} */
+
+/* not used for now */
+/* .bookmark-name-edit-icon {
+	font-size:18px;
+	float: right;
+	color: #716397;
+} */
+
+.saved-bookmark-trash-icon {
+	font-size:20px !important;
+	float: right;
+	color: #716397;
+	cursor: pointer;
+	display: none !important;
+}
+
+.saved-bookmark-trash-icon:hover {
+	color: #f44336;
+}
+
+.saved-bookmark-info-icon {
+	font-size:20px !important;
+	color: #716397;
+	cursor: pointer;
+	vertical-align: middle;
+	display: inline-block;
+	/* z-index: 3; */
+}
+
+/* .saved-bookmark-info-icon:hover {
+	font-variation-settings: 'FILL' 1;
+} */
+
+.saved-bookmark-info-icon-filled {
+	font-variation-settings: 'FILL' 1;
+}
+
+#bookmark-info {
+	/* NOTE: my styling from before */
+	/* background-color: red;
+	position: fixed;
+	width: 100%;
+	bottom: 0px;
+	height: 150px; */
+}
+
+.modal {
+  /* display: flex; */
+  /* flex-direction: column; */
+  justify-content: center;
+  width: 450px;
+  padding: 10px;
+  min-height: 250px;
+	bottom: 15px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+	position: absolute;
+	z-index: 2;
+	height: 450px;
+	right: 15px;
+	border: 1px solid #716397;
+}
+
+.modal-pinned {
+	box-shadow: 0px 0px 0px 1px #716397;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  /* backdrop-filter: blur(3px); */
+  z-index: 1;
+	pointer-events: none;
+}
+
+.hidden {
+  display: none;
+}
+
+/* NOTE: this is when I was trying to give each column a wdith, have a non fixed width table, so that we could enable scrolling with a fixed header; keeping this commented out for now */
+/* #saved-bookmarks-table > thead {
+	display: block;
+  width: 600px;
+}
+
+#saved-bookmarks-table > tbody {
+	height: 300px !important;
+  overflow-y: scroll;
+  display: block
+} */
+
+#saved-bookmarks-table-wrapper {
+	max-height: 400px; 
+	overflow: auto;
+}
+
+/* Add also the following code if sticky header is wanted */
+#saved-bookmarks-table-wrapper table thead th {
+  background: white;
+  position: sticky;
+  top: 0;
+}
+
+#bi-title {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+#bi-date {
+	font-size: 12px;
+	color: #74747B;
+	margin-top: 5px;
+}
+
+#bi-tags {
+	margin-top: 2px;
+	display: block;
+}
+
+#bi-tags > span {
+	font-size: 10px;
+	color: #74747B;
+}
+
+#bi-status {
+	margin-top: 20px;
+}
+
+#bi-status > select {
+	color:#716397;
+	font-size: 12px;
+	cursor: pointer;
+}

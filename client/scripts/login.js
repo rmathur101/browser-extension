@@ -1,4 +1,5 @@
-const USER_ID = 1
+// TODO we can't just expect to have a user id here, we have to require the discord login so that we can have the ability to have a user, we get a response back from the server, and then we can go ahead and associate the discord id stuff with the user that was created
+const USER_ID = 2
 
 let discordLoginBtn = document.getElementById("discord-login-btn")
 // just button styling / animation
@@ -19,15 +20,27 @@ discordLoginBtn.addEventListener("click", async() => {
         console.log("Discord code to be sent to backend: " + response.code)
         console.log("User ID to be sent to backend along with code: " + USER_ID)
         try {
-          const response2 = await axios.post(CONFIG.API_ENDPOINT + "discord" + `?user_id=${USER_ID}&code=${response.code}`, {
-            // user_id: USER_ID, // TODO: THESE SHOULD BE IN POST!!!, not as query params
-            // code: response.code
+          // TODO: in the future I'm thinking that we won't send the user_id, instead we'll just use the request to send enough information to the backend for them to check that the user exists or create them; but for now the route requires the user_id param so keeping as is
+          const response2 = await axios.post(CONFIG.API_ENDPOINT + "discord", {
+            user_id: USER_ID,  
+            code: response.code
           })
+          // NOTE: this is the response where I imagine that we will get the user_id back from the API in the response, this will either be the user_id of the logged in user, or a new user id if a new one was created
+          console.log('response from /discord route')
+          console.log(response2)
+          // if (getUserIdFromResponse(response2)) {
+          if (true) {
+            // TODO: this is hardcoded for now, need to fix with getting the getUserIdFromResponse
+            let userId = 2
+            // TODO: put the userId into google chrome local storage
+            chrome.storage.local.set({userId: userId}, function() {
+              console.log('Value is set to ' + userId);
+            })
+          }
         } catch (error) {
           console.log(error)
         }
       }
     } 
   });
-
 })
