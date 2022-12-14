@@ -33,3 +33,33 @@ When hitting `Submit` or `Done` using the browser extension, you should be able 
 The inital API can currently be accessed on http://188.166.125.32:8000/
 
 for api docs go to http://188.166.125.32:8000/docs
+
+# Setting up backend for local development
+In order to get the same python environment as used for development run 
+
+```
+conda env create -f environment.yml
+````
+
+Alternative you can create you're own python virtual environment and run
+
+```
+pip install -r requirements.txt
+```
+
+Once you have you python environment set up then you need to edit the .env file to point to your local postgres database. You can use the .env.example file as a template. Specifically you need to change the following variables PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST.
+
+If you also want the integration with discord to work then you need to provide a discord bot token in the env file and specify the server_id, channel_id etc.
+
+In order to setup automatic data dumps of messages from the discord server then run the following script. Currently the script assumes that it is run within a persistent terminal using for instance tmux. For production this should probably be run using a dataflow tool like prefect.
+
+```
+python api/discord_utils/scrape.py
+```
+
+For automatic dumps of server metadata use
+
+```
+python api/discord_utils/metadata.py
+```
+
