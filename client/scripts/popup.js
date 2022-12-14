@@ -17,7 +17,10 @@ chrome.storage.local.get(["userId"]).then((result) => {
     populateUserFeed()
 
     // NOTE: gets the channels that user has access to and displays them
-    getAndShowBroadcastChannels()
+    getAndShowBroadcastChannels(document.getElementById("share-select"))
+
+    // TODO: should probably just do this all inside the function for both share-select and bi-share-select, but for now just doing it here
+    getAndShowBroadcastChannels(document.getElementById("bi-share-select"))
   } else {
     document.getElementById("not-signed-in-content").style.display = "block"
   }
@@ -44,8 +47,8 @@ function getIsBookmarkCheckedBool() {
  }
 }
 
-function getIsShareCheckedBool() {
- let elem = document.getElementById("share-checkbox-input") 
+function getIsShareCheckedBool(elemId) {
+ let elem = document.getElementById(elemId) 
  if (elem.checked == true) {
   return true
  } else {
@@ -53,24 +56,50 @@ function getIsShareCheckedBool() {
  }
 }
 
-let shareCheckboxInput = document.getElementById("share-checkbox-input") 
-shareCheckboxInput.addEventListener("click", async () => {
-  let shareCheckboxInputElem = document.getElementById("share-checkbox-input")
-  if (shareCheckboxInputElem.checked == true) {
-    document.getElementById("share-select").style.display = "inline"
-  } else {
-    document.getElementById("share-select").style.display = "none"
-  }
-})
+let shareCheckboxListener = (checkboxElem, selectElem, e) => {
+  if (checkboxElem.checked == true) {
+    selectElem.style.display = "inline"
 
-let getAndShowBroadcastChannels = async() => {
+    // get bi-share-btn elem and display inline if this is the modal view
+    if (checkboxElem.id == 'bi-share-checkbox-input') {
+      let biShareBtn = document.getElementById("bi-share-btn")
+      biShareBtn.style.display = "inline"
+    }
+  } else {
+    selectElem.style.display = "none"
+
+    // get bi-share-btn elem and display none if this is the modal view
+    if (checkboxElem.id == 'bi-share-checkbox-input') {
+      let biShareBtn = document.getElementById("bi-share-btn")
+      biShareBtn.style.display = "none"
+    }
+  }
+}
+
+// NOTE: display appropriate UI elements based on share options
+let shareCheckboxInput = document.getElementById("share-checkbox-input") 
+let shareSelectElem = document.getElementById("share-select")
+shareCheckboxInput.addEventListener("click", shareCheckboxListener.bind(null, shareCheckboxInput, shareSelectElem))
+
+let biShareCheckboxInput = document.getElementById("bi-share-checkbox-input")
+let biShareSelectElem = document.getElementById("bi-share-select")
+biShareCheckboxInput.addEventListener("click", shareCheckboxListener.bind(null, biShareCheckboxInput, biShareSelectElem))
+
+// NOTE: get the channels and display them for the share component
+let getAndShowBroadcastChannels = async(selectElem) => {
   let channels = await getUserChannels()
   if (channels && channels.length > 0) {
     for (const channel of channels) {
       let option = `<option value="${channel.id}">${channel.name}</option>`
-      document.getElementById("share-select").insertAdjacentHTML('beforeend', option)
+      selectElem.insertAdjacentHTML('beforeend', option)
     }
-    document.getElementById("share-input-cont").style.display = "inline"
+
+    // NOTE: the share-input-cont is hidden by default
+    if (selectElem.id == "share-select") {
+      document.getElementById("share-input-cont").style.display = "inline"
+    } else if (selectElem.id == "bi-share-select") {
+      document.getElementById("bi-share-input-cont").style.display = "inline"
+    }
   }
 }
 
@@ -89,21 +118,19 @@ function getShareInfo() {}
 function getTagInfo() {}
 
 
-let shouldShare = () => {
-  let shareCheckboxInput = document.getElementById("share-checkbox-input") 
-  let shareVal = document.getElementById("share-select").value
-  if (shareCheckboxInput.checked == true && shareVal) {
+let shouldShare = (checkboxElem, selectElem) => {
+  if (checkboxElem.checked == true && selectElem.value) {
     return true
   } else {
     return false
   }
 
 }
-let getShareValue = () => {
-  if (shouldShare()) {
+let getShareValue = (checkboxElem, selectElem) => {
+  if (shouldShare(checkboxElem, selectElem)) {
     // TODO: share value hardcoded (#general) for now until Josca makes the fix to change BigInts to strings
     return "1000691190074703905"
-    return document.getElementById("share-select").value
+    return selectElem.value
   } else {
     return null
   }
@@ -117,7 +144,7 @@ let submitBtn = document.getElementById("submit-btn");
 submitBtn.addEventListener("click", async () => {
   let tabURL = await getActiveTabURL()
   let isBookmarkChecked = getIsBookmarkCheckedBool() 
-  let isShareChecked = getIsShareCheckedBool()
+  let isShareChecked = getIsShareCheckedBool("share-checkbox-input")
   let description = getDescription() 
 
   let bookmarkTitleInputVal = getBookmarkTitle()
@@ -150,7 +177,7 @@ submitBtn.addEventListener("click", async () => {
       // user_descr: description,
       // rating: rating,
       bookmark: isBookmarkChecked,
-      share: getShareValue(),
+      share: getShareValue(shareCheckboxInput, shareSelectElem),
       custom_title: customBookmarkTitle, 
       url: tabURL,
       url_title: canonicalTitle,
@@ -956,7 +983,7 @@ document.getElementById('bi-status-select').addEventListener('change', async(e) 
   let URLID = pinnedBookMarkInfoURLID
   // for now a false value implies archived
   let newVal = e.currentTarget.value == 'bookmarked' ? true : false
-  const response = axios.post(CONFIG.API_ENDPOINT + 'urluser/' + URLID, {
+  const response = await axios.post(CONFIG.API_ENDPOINT + 'urluser/' + URLID, {
     bookmark: newVal,
     user_id: getUserId()
   })
@@ -966,4 +993,14 @@ document.getElementById('bi-status-select').addEventListener('change', async(e) 
   // console.log(response)
   // console.log(pinnedBookMarkInfoIcon)
   // console.log(pinnedBookMarkInfoURLID)
+})
+
+document.getElementById('bi-share-btn').addEventListener('click', async(e) => {
+  let URLID = pinnedBookMarkInfoURLID 
+  const response = await axios.post(CONFIG.API_ENDPOINT + 'urluser/' + URLID, {
+    user_id: getUserId(),
+    share: getShareValue(biShareCheckboxInput, biShareSelectElem)
+  })
+  console.log('this is the response from the post after select value changes');
+  console.log(response)
 })

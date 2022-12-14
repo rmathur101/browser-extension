@@ -37,7 +37,8 @@
             <label class="bookmark-submit-label" id="bookmark-checkbox-label" for="bookmark-checkbox">BOOKMARK</label>
             <!-- <span id="bookmark-checkbox-info-icon" class="material-symbols-outlined">help</span> -->
           </span>
-          <!-- <br> -->
+
+          <!-- NOTE: this section includes the checkbox for sharing along the select element for choosing the channel to share to -->
           <span id="share-input-cont" style="margin-left: 10px; display: none;">
             <input id="share-checkbox-input" type="checkbox" name="share-checkbox">
             <label class="bookmark-submit-label" id="share-checkbox-label" for="share-checkbox">BROADCAST</label>
@@ -45,6 +46,7 @@
             <select id="share-select" style="display: none"></select>
             <!-- <span id="share-checkbox-info-icon" class="material-symbols-outlined">help</span> -->
           </span>
+
           <br/><br/>
           <span id="add-tag-input-cont">
             <span id="add-tag-input-label" style="font-size: 15px">TAGS </span>
@@ -128,6 +130,16 @@
                 </div>
                 <div id="bi-date"></div>
                 <div id="bi-shared-by"></div>
+
+                <!-- NOTE: this is the checkbox and select element for sharing -->
+                <div id="bi-share-input-cont">
+                  <input id="bi-share-checkbox-input" type="checkbox" name="share-checkbox">
+                  <label class="bookmark-submit-label" id="bi-share-checkbox-label" for="share-checkbox">BROADCAST</label>
+                  <!-- NOTE: hidden select dropdown -->
+                  <select id="bi-share-select" style="display: none"></select>
+                  <button id="bi-share-btn" style="display: none">confirm</button>
+                </div>
+
               </div>
             </section>
             <!-- this is the dark blurred background behind the modal -->
