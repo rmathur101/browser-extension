@@ -45,9 +45,17 @@ Alternative you can create you're own python virtual environment and run
 
 ```
 pip install -r requirements.txt
+pip install -e .
 ```
 
 Once you have you python environment set up then you need to edit the .env file to point to your local postgres database. You can use the .env.example file as a template. Specifically you need to change the following variables PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST.
+
+Once the .env file is set up then you can start the backend API by running the following command from the api folder.
+
+```
+uvicorn main:app --reload
+```
+
 
 If you also want the integration with discord to work then you need to provide a discord bot token in the env file and specify the server_id, channel_id etc.
 
