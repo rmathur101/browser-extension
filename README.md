@@ -50,7 +50,15 @@ pip install -e .
 
 Once you have you python environment set up then you need to edit the .env file to point to your local postgres database. You can use the .env.example file as a template. Specifically you need to change the following variables PG_USER, PG_PASSWORD, PG_DATABASE, PG_HOST.
 
-Once the .env file is set up then you can start the backend API by running the following command from the api folder.
+Once the .env file is set up then you can initialise the tables in the database by running the following code from python.
+
+```python
+from api.db import create_db_and_tables
+
+create_db_and_tables() 
+```
+
+When the connection to a postgres database is established and the tables are created then you can start the backend API by running the following command from the api folder.
 
 ```
 uvicorn main:app --reload
