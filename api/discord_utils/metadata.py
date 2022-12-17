@@ -3,7 +3,6 @@ from dotenv import dotenv_values
 import json
 from collections import defaultdict
 from pathlib import Path
-from cache import AsyncTTL
 from discord.ext import tasks, commands
 
 
