@@ -61,6 +61,12 @@ async def update_user_discord_data(discord_user: models.DiscordAddUserData):
 
 @router.get("/discord/{user_id}")
 async def get_user_channels_and_threads(user_id):
+    # RM: this function is used to convert the channel ids to strings
+    def stringify_ids(channels):
+        for channel in channels:
+            channel["id"] = str(channel["id"])
+        return channels
+
     with open(DATA_DIR / "metadata" / "server_metadata.json", "r") as f:
         channels = json.load(f)
-    return channels
+        return stringify_ids(channels)

@@ -1,7 +1,13 @@
-.DS_Store
+# client config
 client/config/config.js
+
+# server config
 .env
 
 # python stuff
 __pycache__/
 api.egg-info/
+
+# RM's ignore files 
+.DS_Store
+data_dir
