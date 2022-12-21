@@ -11,3 +11,4 @@ api.egg-info/
 # RM's ignore files 
 .DS_Store
 data_dir
+.vscode
