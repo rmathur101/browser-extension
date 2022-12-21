@@ -111,12 +111,13 @@ async def update_delete_url_user(url_id, url_user: models.UrlUserUpdateApi):
 
 # FIXME: I dont think this is working, Test out when debugging. Also keep all
 # arguments in body
-@router.get("/urluser/{url_id}", response_model=models.UrlUserRead)
-async def read_url_user(*, session: Session = Depends(get_session), url_id: int):
-    url_user = session.get(models.UrlUser, url_id)
-    if url_user is None:
-        raise HTTPException(status_code=404, detail="Url not found")
-    return url_user
+# NOTE: RM - I'm commenting this out for now, I'm not sure if we're going to need it, and it's one of the endpoints that may need to be modified to ensure that the response data doesn't violate any of the javascript bigint limitations. If we need it later we can uncomment it.
+# @router.get("/urluser/{url_id}", response_model=models.UrlUserRead)
+# async def read_url_user(*, session: Session = Depends(get_session), url_id: int):
+#     url_user = session.get(models.UrlUser, url_id)
+#     if url_user is None:
+#         raise HTTPException(status_code=404, detail="Url not found")
+#     return url_user
 
 
 def share_url_to_discord(user, url, descr, channel_id):
