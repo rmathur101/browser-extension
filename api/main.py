@@ -1,3 +1,13 @@
+import dotenv
+config = dotenv.dotenv_values()
+DEBUG = config["DATA_DIR"]
+
+# RM: This is to allow debugging in VSCode, I have to use it in my case, and Josca doesn't, I would guess because I'm not able to have multiple things listening on the same port because I'm running local development
+if DEBUG == "True":
+    import ptvsd
+    ptvsd.enable_attach(address=('127.0.0.1', 4000))
+    ptvsd.wait_for_attach()
+
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
