@@ -11,7 +11,7 @@
     "identity"
   ],
 
-  "host_permissions": ["http://188.166.125.32/*"],
+  "host_permissions": ["http://188.166.125.32/*", "http://127.0.0.1:8000/*"],
 
   "background": {
     "service_worker": "scripts/background.js"
