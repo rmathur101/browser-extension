@@ -3,6 +3,7 @@ client/config/config.js
 
 # server config
 .env
+api/logs
 
 # python stuff
 __pycache__/
