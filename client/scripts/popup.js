@@ -8,7 +8,8 @@ let userId
 // NOTE: if there is no value for userId, then we need to show that they are forced to login or sign up, and then we'll only show them one button to do so; we can show or hide the entire container or not based on this value, until then it should just be hidden
 chrome.storage.local.get(["userId"]).then((result) => {
   console.log("userId value from storage.local: " + result.userId);
-  if (result.userId) {
+  // TODO: change this back, for now just going to the not signed in content 
+  if (false && result.userId) {
     document.getElementById("signed-in-content").style.display = "block"
     userId = result.userId
 
