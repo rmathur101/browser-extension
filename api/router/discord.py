@@ -14,13 +14,11 @@ discord_oauth = Oauth(
     config["CLIENT_ID"],
     config["CLIENT_SECRET"],
     config["REDIRECT_URL"],
-    scope="identify email guilds",
+    scope="identify guilds",
 )
-
-
+# RM NOTE: This is what we used for the old scope: scope="identify email guilds. I changed the scope on both the client and here on the backend because I don't think we need the email.",
 
 router = APIRouter()
-
 
 @router.get("/discord")
 async def go_to_discord_authentication_page():
@@ -31,7 +29,6 @@ async def go_to_discord_authentication_page():
 @router.post("/discord")
 async def update_user_discord_data(discord_user: models.DiscordAddUserData):
     try:
-
         # Get discord tokens using code from authentication and check if access token is available 
         tokens = discord_oauth.get_access_token(code=discord_user.code)
         if (not ("access_token" in tokens)):

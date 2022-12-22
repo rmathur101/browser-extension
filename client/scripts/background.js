@@ -8,7 +8,8 @@ const CLIENT_ID = encodeURIComponent('1023480020729090058');
 
 const RESPONSE_TYPE = encodeURIComponent('code');
 const REDIRECT_URI = encodeURIComponent('https://ibldghmofcjajbnjofakcemodnlmnfnf.chromiumapp.org');
-const SCOPE = encodeURIComponent('identify email');
+// const SCOPE = encodeURIComponent('identify email');
+const SCOPE = encodeURIComponent('identify');
 const STATE = encodeURIComponent('meet' + Math.random().toString(36).substring(2, 15));
 
 let user_signed_in = false;
