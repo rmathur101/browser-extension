@@ -5,7 +5,6 @@ DEBUG = config["DEBUG"]
 if DEBUG == "1":
     import ptvsd
     ptvsd.enable_attach(address=('127.0.0.1', 4000))
-    # ptvsd.wait_for_attach()
 
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
@@ -22,7 +21,7 @@ app.include_router(url_user.router)
 app.include_router(user.router)
 app.include_router(discord.router)
 
-
+# Any RequestValidationError will be handled by this function
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     logger.error("RequestValidationError", error_type='RequestValidationError', status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.errors(), body=exc.body)
