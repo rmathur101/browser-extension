@@ -2,6 +2,8 @@ from typing import List
 from api import models, crud 
 from fastapi import Depends, HTTPException, APIRouter
 import dotenv
+from api.auth.auth_bearer import JWTBearer
+from api.auth.auth_handler import signJWT
 from api.discord_utils import Oauth
 import json
 from pathlib import Path
@@ -20,14 +22,15 @@ discord_oauth = Oauth(
 
 router = APIRouter()
 
-@router.get("/discord")
-async def go_to_discord_authentication_page():
-    url = discord_oauth.get_authorization_url()
-    return {"url": url}
+# RM NOTE: Don't think we need this anymore (maybe Josca was using it for testing)
+# @router.get("/discord")
+# async def go_to_discord_authentication_page():
+#     url = discord_oauth.get_authorization_url()
+#     return {"url": url}
 
 
 @router.post("/discord")
-async def update_user_discord_data(discord_user: models.DiscordAddUserData):
+async def create_or_auth_discord_user(discord_user: models.DiscordAddUserData):
     try:
         # Get discord tokens using code from authentication and check if access token is available 
         tokens = discord_oauth.get_access_token(code=discord_user.code)
@@ -51,12 +54,14 @@ async def update_user_discord_data(discord_user: models.DiscordAddUserData):
                 discord_avatar=discord_data["avatar"],
             )
             user = crud.user.create(user)
+            JWTToken = signJWT(user.id, user.discord_id)
 
             logger.info("New user created.", user_id=user.id, discord_username=user.discord_username)
-            return {"status_code": 200, "detail": "User created"}
+            return {"status_code": 200, "detail": "User created", "jwt_access_token": JWTToken}
         else:
+            JWTToken = signJWT(user.id, user.discord_id)
             logger.info("This user already has account.", user_id=user.id, discord_username=user.discord_username)
-            return {"status_code": 200, "detail": "User already has account."}
+            return {"status_code": 200, "detail": "User already has account.", "jwt_access_token": JWTToken}
 
         # RM NOTE: I'm commenting this out because I don't think we need it. If we do, we can uncomment it. Basically I can't think of why assigning the shares to a user after they logged in would be important, this should be fine for now.
         # Check if user has shared any urls in discord. If so update user_id
@@ -74,7 +79,7 @@ async def update_user_discord_data(discord_user: models.DiscordAddUserData):
         logger.error("Error in /discord endpoint", error=e, discord_user=discord_user)
         return {"status_code": 500}
 
-@router.get("/discord/{user_id}")
+@router.get("/discord/{user_id}", dependencies=[Depends(JWTBearer())])
 async def get_user_channels_and_threads(user_id):
     # RM: this function is used to convert the channel ids to strings
     def stringify_ids(channels):

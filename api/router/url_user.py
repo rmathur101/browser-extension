@@ -1,5 +1,6 @@
 from typing import List
 from api import models, crud, utils
+from api.auth.auth_bearer import JWTBearer
 from db import get_session
 from sqlalchemy.exc import IntegrityError
 from fastapi import Depends, HTTPException, APIRouter
@@ -16,11 +17,9 @@ UPDATE_FIELDS = (
     "bookmark",
 )
 
-
-@router.post("/urluser/", response_model=models.UrlUserRead)
-def create_url_user(
-    *, session: Session = Depends(get_session), url_user: models.UrlUserCreateApi
-):
+# creates the url_user (url for a given user)
+@router.post("/urluser/", dependencies=[Depends(JWTBearer())], response_model=models.UrlUserRead)
+def bookmark_user_url(*, session: Session = Depends(get_session), url_user: models.UrlUserCreateApi):
     # Get url and create if not exists
     url_str = url_user.url
     url_title = url_user.url_title
@@ -62,8 +61,8 @@ def create_url_user(
     return url_user_created
 
 
-@router.post("/urluser/{url_id}", response_model=models.UrlUserRead)
-async def update_delete_url_user(url_id, url_user: models.UrlUserUpdateApi):
+@router.post("/urluser/{url_id}", dependencies=[Depends(JWTBearer())], response_model=models.UrlUserRead)
+async def update_bookmark(url_id, url_user: models.UrlUserUpdateApi):
     url_user = models.UrlUserUpdate(url_id=url_id, **url_user.dict(exclude_unset=True))
 
     # Get tags
